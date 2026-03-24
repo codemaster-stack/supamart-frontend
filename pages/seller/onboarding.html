@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Set Up Your Store — Supamart</title>
+  <link rel="stylesheet" href="../../assets/css/global.css"/>
+  <link rel="stylesheet" href="onboarding.css"/>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="onboard-topbar">
+    <div class="brand-logo">Supa<span>mart</span></div>
+    <p>Seller Onboarding</p>
+  </header>
+
+  <main class="onboard-main">
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="step active" id="step-indicator-1">
+        <div class="step-dot">1</div>
+        <span>Store Info</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-indicator-2">
+        <div class="step-dot">2</div>
+        <span>Upload Logo</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-indicator-3">
+        <div class="step-dot">3</div>
+        <span>Done</span>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="onboard-card">
+
+      <div class="onboard-header">
+        <h1>Set Up Your Store</h1>
+        <p>This information will appear on your public store page</p>
+      </div>
+
+      <div class="alert alert-error" id="alertBox"></div>
+      <div class="alert alert-success" id="successBox"></div>
+
+      <form id="onboardForm" enctype="multipart/form-data">
+
+        <!-- Step 1: Store Info -->
+        <div class="form-step" id="formStep1">
+
+          <div class="form-group">
+            <label for="businessName">Business / Store Name *</label>
+            <input
+              type="text"
+              id="businessName"
+              placeholder="e.g. Adaeze Fashion House"
+              required
+            />
+            <small>This will be your store's display name</small>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Shop Location *</label>
+            <input
+              type="text"
+              id="location"
+              placeholder="e.g. Lagos Island, Lagos, Nigeria"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">WhatsApp / Phone Number *</label>
+            <div class="phone-input">
+              <span class="phone-prefix">+</span>
+              <input
+                type="tel"
+                id="phoneNumber"
+                placeholder="2348012345678 (include country code)"
+                required
+              />
+            </div>
+            <small>Buyers will contact you via this number on WhatsApp</small>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-full" onclick="goToStep2()">
+            Continue →
+          </button>
+
+        </div>
+
+        <!-- Step 2: Logo Upload -->
+        <div class="form-step hidden" id="formStep2">
+
+          <div class="logo-upload-area" id="logoUploadArea">
+            <div class="logo-preview" id="logoPreview">
+              <div class="logo-placeholder">
+                <span class="upload-icon">📷</span>
+                <p>Click to upload your store logo</p>
+                <small>JPG, PNG or WEBP — max 2MB</small>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="logoInput"
+              accept="image/jpg,image/jpeg,image/png,image/webp"
+              style="display:none"
+              onchange="previewLogo(event)"
+            />
+          </div>
+
+          <div class="logo-actions">
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('logoInput').click()">
+              📁 Choose Image
+            </button>
+            <small>Logo is optional but recommended</small>
+          </div>
+
+          <div class="step2-buttons">
+            <button type="button" class="btn btn-outline" onclick="goToStep1()">
+              ← Back
+            </button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              Create My Store 🚀
+            </button>
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="onboarding.js"></script>
+
+</body>
+</html>

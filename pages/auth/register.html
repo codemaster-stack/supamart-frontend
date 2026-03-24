@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account — Supamart</title>
+  <link rel="stylesheet" href="../../assets/css/global.css"/>
+  <link rel="stylesheet" href="register.css"/>
+</head>
+<body>
+
+  <div class="auth-wrapper">
+
+    <!-- Left Panel -->
+    <div class="auth-left">
+      <div class="auth-brand">
+        <div class="brand-logo">Supa<span>mart</span></div>
+        <p class="brand-tagline">Africa's smartest marketplace</p>
+      </div>
+      <div class="auth-illustration">
+        <div class="float-card card-1">🛍️ Shop Anything</div>
+        <div class="float-card card-2">💰 Sell Globally</div>
+        <div class="float-card card-3">🔒 Escrow Protected</div>
+        <div class="float-card card-4">💱 Multi-Currency</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="auth-right">
+      <div class="auth-box">
+
+        <div class="auth-header">
+          <h1>Create Account</h1>
+          <p>Join thousands of buyers and sellers on Supamart</p>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert alert-error" id="alertBox"></div>
+
+        <form id="registerForm">
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name" required/>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required/>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="Minimum 6 characters" required/>
+              <button type="button" class="toggle-password" onclick="togglePassword('password')">👁</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="role">I want to</label>
+            <select id="role" required>
+              <option value="buyer">Shop on Supamart (Buyer)</option>
+              <option value="seller">Sell on Supamart (Seller)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+            Create Account
+          </button>
+
+        </form>
+
+        <div class="auth-footer">
+          Already have an account?
+          <a href="login.html">Sign in</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="register.js"></script>
+
+</body>
+</html>
