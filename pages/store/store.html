@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Store — Supamart</title>
+  <link rel="stylesheet" href="../../assets/css/global.css"/>
+  <link rel="stylesheet" href="store.css"/>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="../home/index.html" class="navbar-logo">Supa<span>mart</span></a>
+      <ul class="navbar-links">
+        <li><a href="../home/index.html">← Marketplace</a></li>
+        <li id="navLogin"><a href="../auth/login.html">Sign In</a></li>
+        <li id="navLogout" style="display:none">
+          <a href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Store Header -->
+  <div class="store-header" id="storeHeader">
+    <div class="container">
+      <div class="store-hero">
+        <div class="store-logo-wrapper">
+          <img id="storeLogoLarge" src="" alt="" style="display:none"/>
+          <div id="storeLogoPlaceholder" class="store-logo-placeholder">🏪</div>
+        </div>
+        <div class="store-hero-info">
+          <h1 id="storeNameLarge"></h1>
+          <p id="storeLocation"></p>
+          <div class="store-hero-actions">
+            <button class="btn-whatsapp-store" id="whatsappStoreBtn">
+              💬 WhatsApp Store
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store Products -->
+  <section class="store-products container">
+    <div class="section-header">
+      <h2>Products</h2>
+      <div class="currency-switcher">
+        <select id="currencySelect" onchange="switchCurrency(this.value)">
+          <option value="NGN">₦ NGN</option>
+          <option value="USD">$ USD</option>
+          <option value="GBP">£ GBP</option>
+          <option value="EUR">€ EUR</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="product-grid" id="storeProductGrid">
+      <div class="product-skeleton"></div>
+      <div class="product-skeleton"></div>
+      <div class="product-skeleton"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">📦</div>
+      <h3>No products yet</h3>
+      <p>This store hasn't added any products</p>
+    </div>
+
+  </section>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="store.js"></script>
+
+</body>
+</html>

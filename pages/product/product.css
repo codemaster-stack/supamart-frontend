@@ -1,0 +1,228 @@
+/* ─── Page Loader ─── */
+.page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── Product Layout ─── */
+.product-main {
+  padding: 48px 20px;
+}
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* ─── Images ─── */
+.main-image-wrapper {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--gray-100);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.main-image-placeholder {
+  font-size: 80px;
+  text-align: center;
+}
+
+.image-thumbnails {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: var(--transition);
+  background: var(--gray-100);
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+  border-color: var(--primary);
+}
+
+/* ─── Product Details ─── */
+.product-store-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+}
+
+.store-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--gray-200);
+}
+
+.store-label {
+  font-size: 11px;
+  color: var(--gray-400);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.store-name-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  transition: var(--transition);
+}
+
+.store-name-link:hover {
+  text-decoration: underline;
+}
+
+.product-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gray-900);
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.product-price-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--primary-light);
+  border-radius: var(--radius);
+  border: 1px solid rgba(232,93,4,0.15);
+}
+
+.current-price {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.currency-switcher-inline select {
+  padding: 8px 12px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  background: white;
+  cursor: pointer;
+}
+
+.product-description {
+  font-size: 15px;
+  color: var(--gray-600);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.product-meta {
+  font-size: 13px;
+  color: var(--gray-400);
+  margin-bottom: 28px;
+}
+
+/* ─── Action Buttons ─── */
+.product-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  font-size: 15px;
+  transition: var(--transition);
+}
+
+.btn-whatsapp:hover {
+  background: #1da851;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,211,102,0.35);
+}
+
+/* ─── Escrow Info ─── */
+.escrow-info {
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  border: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.escrow-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+/* ─── Error State ─── */
+.error-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.error-state .empty-icon { font-size: 64px; margin-bottom: 16px; }
+.error-state h3 { font-size: 22px; font-weight: 700; color: var(--gray-700); }
+.error-state p { color: var(--gray-400); margin-top: 8px; }
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .product-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .product-title { font-size: 22px; }
+  .current-price { font-size: 26px; }
+}

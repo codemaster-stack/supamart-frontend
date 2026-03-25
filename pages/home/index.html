@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supamart — Africa's Smartest Marketplace</title>
+  <link rel="stylesheet" href="../../assets/css/global.css"/>
+  <link rel="stylesheet" href="home.css"/>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="navbar-logo">Supa<span>mart</span></a>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for products..."
+          oninput="handleSearch(this.value)"
+        />
+        <button onclick="handleSearch(document.getElementById('searchInput').value)">
+          🔍
+        </button>
+      </div>
+
+      <!-- Currency Switcher -->
+      <div class="currency-switcher">
+        <select id="currencySelect" onchange="switchCurrency(this.value)">
+          <option value="NGN">₦ NGN</option>
+          <option value="USD">$ USD</option>
+          <option value="GBP">£ GBP</option>
+          <option value="EUR">€ EUR</option>
+        </select>
+      </div>
+
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li id="navSell" style="display:none">
+          <a href="../seller/dashboard.html">My Store</a>
+        </li>
+        <li id="navOrders" style="display:none">
+          <a href="../buyer/dashboard.html">My Orders</a>
+        </li>
+        <li id="navLogin"><a href="../auth/login.html">Sign In</a></li>
+        <li id="navRegister">
+          <a href="../auth/register.html" class="btn btn-primary" style="padding:8px 16px">
+            Get Started
+          </a>
+        </li>
+        <li id="navLogout" style="display:none">
+          <a href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Shop Smart.<br/><span>Sell Global.</span></h1>
+        <p>
+          Discover thousands of products from verified sellers.
+          Pay securely with escrow protection.
+        </p>
+        <div class="hero-actions">
+          <a href="../auth/register.html?role=seller" class="btn btn-primary">
+            Start Selling
+          </a>
+          <a href="#products" class="btn btn-outline">
+            Browse Products
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <strong>🔒</strong>
+            <span>Escrow Protected</span>
+          </div>
+          <div class="stat">
+            <strong>💱</strong>
+            <span>4 Currencies</span>
+          </div>
+          <div class="stat">
+            <strong>🌍</strong>
+            <span>Global Reach</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section" id="products">
+    <div class="container">
+
+      <div class="section-header">
+        <h2>All Products</h2>
+        <p id="productCount">Loading products...</p>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="product-grid" id="productGrid">
+        <!-- Skeleton loaders -->
+        <div class="product-skeleton"></div>
+        <div class="product-skeleton"></div>
+        <div class="product-skeleton"></div>
+        <div class="product-skeleton"></div>
+        <div class="product-skeleton"></div>
+        <div class="product-skeleton"></div>
+      </div>
+
+      <!-- Load More -->
+      <div class="load-more-wrapper" id="loadMoreWrapper" style="display:none">
+        <button class="btn btn-outline" id="loadMoreBtn" onclick="loadMore()">
+          Load More Products
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="empty-icon">📦</div>
+        <h3>No products found</h3>
+        <p>Try a different search or check back later</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="home.js"></script>
+
+</body>
+</html>

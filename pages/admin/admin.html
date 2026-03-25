@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — Supamart</title>
+  <link rel="stylesheet" href="../../assets/css/global.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-brand">Supa<span>mart</span></div>
+      <div class="admin-badge">Admin Panel</div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" onclick="showTab('overview')">
+          📊 Overview
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('users')">
+          👥 Users
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('orders')">
+          🧾 Orders
+        </a>
+        <a href="#" class="nav-item" onclick="showTab('escrow')">
+          🔒 Escrow
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../home/index.html" class="nav-item">🌐 Marketplace</a>
+        <a href="#" class="nav-item" onclick="logout()">🚪 Logout</a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+      <div class="dash-topbar">
+        <div>
+          <h1 id="dashTitle">Overview</h1>
+          <p id="dashSubtitle">Platform statistics and management</p>
+        </div>
+      </div>
+
+      <div class="alert alert-error" id="alertBox"></div>
+      <div class="alert alert-success" id="successBox"></div>
+
+      <!-- ── Overview ── -->
+      <div class="tab-content" id="tab-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statUsers">—</div>
+              <div class="stat-label">Buyers</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏪</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSellers">—</div>
+              <div class="stat-label">Sellers</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statProducts">—</div>
+              <div class="stat-label">Products</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🧾</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statOrders">—</div>
+              <div class="stat-label">Total Orders</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statDisputes">—</div>
+              <div class="stat-label">Disputes</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔒</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statEscrow">—</div>
+              <div class="stat-label">Held in Escrow</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Users ── -->
+      <div class="tab-content hidden" id="tab-users">
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>All Users</h3>
+          </div>
+          <div id="usersList">
+            <p class="empty-text">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Orders ── -->
+      <div class="tab-content hidden" id="tab-orders">
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>All Orders</h3>
+          </div>
+          <div id="adminOrdersList">
+            <p class="empty-text">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Escrow ── -->
+      <div class="tab-content hidden" id="tab-escrow">
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>Escrow Records</h3>
+            <span style="font-size:13px;color:var(--gray-500)">
+              Manage held and disputed payments
+            </span>
+          </div>
+          <div id="escrowList">
+            <p class="empty-text">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
