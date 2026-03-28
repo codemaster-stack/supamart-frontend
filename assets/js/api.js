@@ -1,5 +1,5 @@
 // ─── CHANGE THIS TO YOUR RENDER URL AFTER DEPLOYMENT ───
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://supamart-backend.onrender.com/api';
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
   const token = localStorage.getItem('supamart_token');
