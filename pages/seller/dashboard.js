@@ -374,13 +374,17 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
   btn.innerHTML = '<span class="spinner"></span> Saving...';
 
   try {
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', description);
-    formData.append('basePriceNGN', basePriceNGN);
-    for (let i = 0; i < imageFiles.length; i++) {
-      formData.append('images', imageFiles[i]);
-    }
+   const formData = new FormData();
+formData.append('name', name);
+formData.append('description', description);
+formData.append('basePriceNGN', basePriceNGN);
+
+// Only append images if files were selected
+if (imageFiles && imageFiles.length > 0) {
+  for (let i = 0; i < imageFiles.length; i++) {
+    formData.append('images', imageFiles[i]);
+  }
+}
 
     const token = getToken();
     const url = editingProductId
