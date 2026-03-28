@@ -232,7 +232,6 @@ function loadStoreTab() {
     return;
   }
 
-  // Build full shareable URL using current domain
   const storeUrl = `${window.location.origin}/pages/store/store.html?slug=${storeData.slug}`;
 
   container.innerHTML = `
@@ -260,12 +259,8 @@ function loadStoreTab() {
         </div>
       </div>
     </div>
-
     <div style="padding:0 24px 24px;display:flex;gap:12px;flex-wrap:wrap">
-      <button
-        class="btn btn-primary"
-        onclick="copyStoreUrl('${storeUrl}')"
-      >
+      <button class="btn btn-primary" id="copyStoreBtn">
         📋 Copy Store Link
       </button>
       
@@ -275,15 +270,34 @@ function loadStoreTab() {
       >
         🌐 View Public Store
       </a>
-      <button
-        class="btn btn-outline"
-        onclick="shareStore('${storeUrl}', '${storeData.businessName}')"
-      >
+      <button class="btn btn-outline" id="shareStoreBtn">
         📤 Share Store
       </button>
     </div>
   `;
+
+  // Attach events safely — no inline onclick
+  document.getElementById('copyStoreBtn').addEventListener('click', () => {
+    copyStoreUrl(storeUrl);
+  });
+
+  document.getElementById('shareStoreBtn').addEventListener('click', () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${storeData.businessName} on Supamart`,
+        text: `Check out ${storeData.businessName} on Supamart!`,
+        url: storeUrl
+      }).catch(() => {
+        copyStoreUrl(storeUrl);
+      });
+    } else {
+      copyStoreUrl(storeUrl);
+      showAlert('Link copied! Share it anywhere.', 'success');
+    }
+  });
 }
+
+
 function copyStoreUrl(url) {
   navigator.clipboard.writeText(url).then(() => {
     showAlert('Store URL copied to clipboard!', 'success');
