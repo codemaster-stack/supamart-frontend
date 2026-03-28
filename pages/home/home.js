@@ -124,7 +124,6 @@ function createProductCard(product) {
         src="${product.images[0]}"
         alt="${product.name}"
         loading="lazy"
-        onerror="this.parentElement.innerHTML='<div class=\'product-image-placeholder\'>📦</div>'"
       />`
     : `<div class="product-image-placeholder">📦</div>`;
 
@@ -138,42 +137,52 @@ function createProductCard(product) {
     <div class="product-info">
       <div class="product-store">
         ${storeLogo}
-        <span class="store-name">${product.storeId?.businessName || 'Unknown Store'}</span>
+        <span class="store-name">
+          ${product.storeId?.businessName || 'Unknown Store'}
+        </span>
       </div>
       <div class="product-name">${product.name}</div>
       <div class="product-price">${formattedPrice}</div>
       <div class="product-actions">
-        <button
-          class="btn btn-primary"
-          onclick="viewProduct('${product._id}')"
-        >
+        <button class="btn btn-primary" id="view-${product._id}">
           View
         </button>
-        <button
-          class="btn btn-outline"
-          onclick="contactSeller('${product.storeId?.phoneNumber}', '${product.name}', '${product.storeId?.businessName}')"
-        >
+        <button class="btn btn-outline" id="wa-${product._id}">
           💬
         </button>
       </div>
     </div>
   `;
 
+  // Attach events safely — no inline onclick
+  card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
+    window.location.href = `/pages/product/product.html?id=${product._id}`;
+  });
+
+  card.querySelector(`#wa-${product._id}`).addEventListener('click', () => {
+    const phone = product.storeId?.phoneNumber;
+    if (!phone) return alert('Seller contact not available');
+    const cleanPhone = phone.replace(/\D/g, '');
+    const message = encodeURIComponent(
+      `Hi! I'm interested in "${product.name}" from "${product.storeId?.businessName}" on Supamart.`
+    );
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+  });
+
   return card;
 }
-
 // ─── Actions ──────────────────────────────────────────────
-function viewProduct(productId) {
-  window.location.href = `/pages/product/product.html?id=${productId}`;
-}
+// function viewProduct(productId) {
+//   window.location.href = `/pages/product/product.html?id=${productId}`;
+// }
 
-function contactSeller(phone, productName, storeName) {
-  if (!phone) return alert('Seller contact not available');
-  const message = encodeURIComponent(
-    `Hi! I'm interested in "${productName}" from your store "${storeName}" on Supamart.`
-  );
-  window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-}
+// function contactSeller(phone, productName, storeName) {
+//   if (!phone) return alert('Seller contact not available');
+//   const message = encodeURIComponent(
+//     `Hi! I'm interested in "${productName}" from your store "${storeName}" on Supamart.`
+//   );
+//   window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+// }
 
 // ─── Search ───────────────────────────────────────────────
 function handleSearch(value) {

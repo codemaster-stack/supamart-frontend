@@ -47,13 +47,13 @@ function renderStoreHeader(store) {
   document.getElementById('storeLocation').textContent =
     `📍 ${store.location}`;
 
-  document.getElementById('whatsappStoreBtn').onclick = () => {
-    const phone = store.phoneNumber.replace(/\D/g, '');
-    const msg = encodeURIComponent(
-      `Hi! I found your store "${store.businessName}" on Supamart and I'd like to enquire.`
-    );
-    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-  };
+ document.getElementById('whatsappStoreBtn').onclick = () => {
+  const phone = store.phoneNumber.replace(/\D/g, '');
+  const msg = encodeURIComponent(
+    `Hi ${store.businessName}! I found your store on Supamart and I'd like to make an enquiry. Please share your available products and prices.`
+  );
+  window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+};
 }
 
 async function loadStoreProducts(storeId) {
@@ -69,37 +69,49 @@ async function loadStoreProducts(storeId) {
       return;
     }
 
-    products.forEach(product => {
-      const price = computeDisplayPrice(
-        product.basePriceNGN, userCurrency, exchangeRates
-      );
-      const formatted = formatPrice(price, userCurrency);
+   products.forEach(product => {
+  const price = computeDisplayPrice(
+    product.basePriceNGN, userCurrency, exchangeRates
+  );
+  const formatted = formatPrice(price, userCurrency);
 
-      const imgHTML = product.images?.length > 0
-        ? `<img class="product-image" src="${product.images[0]}" alt="${product.name}" loading="lazy"/>`
-        : `<div class="product-image-placeholder">📦</div>`;
+  const imgHTML = product.images?.length > 0
+    ? `<img class="product-image" src="${product.images[0]}" alt="${product.name}" loading="lazy"/>`
+    : `<div class="product-image-placeholder">📦</div>`;
 
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = `
-        ${imgHTML}
-        <div class="product-info">
-          <div class="product-name">${product.name}</div>
-          <div class="product-price">${formatted}</div>
-          <div class="product-actions">
-            <button class="btn btn-primary"
-              onclick="window.location.href='/page/product/product.html?id=${product._id}'">
-              View
-            </button>
-            <button class="btn-whatsapp-sm"
-              onclick="contactSeller('${storeData.phoneNumber}','${product.name}','${storeData.businessName}')">
-              💬
-            </button>
-          </div>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.innerHTML = `
+    ${imgHTML}
+    <div class="product-info">
+      <div class="product-name">${product.name}</div>
+      <div class="product-price">${formatted}</div>
+      <div class="product-actions">
+        <button class="btn btn-primary" id="view-${product._id}">
+          View
+        </button>
+        <button class="btn-whatsapp-sm" id="wa-${product._id}">
+          💬
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Attach events safely
+  card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
+    window.location.href = `/pages/product/product.html?id=${product._id}`;
+  });
+
+  card.querySelector(`#wa-${product._id}`).addEventListener('click', () => {
+    const phone = storeData.phoneNumber.replace(/\D/g, '');
+    const msg = encodeURIComponent(
+      `Hi! I'm interested in "${product.name}" from your store "${storeData.businessName}" on Supamart.`
+    );
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+  });
+
+  grid.appendChild(card);
+});
 
   } catch (error) {
     document.getElementById('storeProductGrid').innerHTML =
