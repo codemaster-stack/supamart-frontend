@@ -27,14 +27,27 @@ async function loadStoreData() {
 
     document.getElementById('addProductBtn').style.display = 'block';
 
+    // Add store link to topbar
+    const storeUrl = `${window.location.origin}/pages/store/store.html?slug=${storeData.slug}`;
+    const topbarRight = document.querySelector('.topbar-right');
+    if (topbarRight && !document.getElementById('viewStoreLink')) {
+      const link = document.createElement('a');
+      link.id = 'viewStoreLink';
+      link.href = storeUrl;
+      link.target = '_blank';
+      link.className = 'btn btn-outline';
+      link.style.fontSize = '13px';
+      link.style.padding = '8px 14px';
+      link.textContent = '🌐 View My Store';
+      topbarRight.insertBefore(link, topbarRight.firstChild);
+    }
+
   } catch (error) {
-    // No store yet
     if (error.message.includes('not created')) {
       window.location.href = '/pages/seller/onboarding.html';
     }
   }
 }
-
 // ─── Overview Stats ───────────────────────────────────────
 async function loadOverviewStats() {
   try {
@@ -219,6 +232,7 @@ function loadStoreTab() {
     return;
   }
 
+  // Build full shareable URL using current domain
   const storeUrl = `${window.location.origin}/pages/store/store.html?slug=${storeData.slug}`;
 
   container.innerHTML = `
@@ -240,28 +254,65 @@ function loadStoreTab() {
         <p>${new Date(storeData.createdAt).toLocaleDateString()}</p>
       </div>
       <div class="info-item" style="grid-column:1/-1">
-        <label>Your Store URL</label>
-        <div class="store-url-copy" onclick="copyStoreUrl('${storeUrl}')">
-          🔗 ${storeUrl} &nbsp; <span style="color:var(--gray-400)">Click to copy</span>
+        <label>Your Shareable Store URL</label>
+        <div class="store-url-copy" id="storeUrlDisplay">
+          🔗 ${storeUrl}
         </div>
       </div>
     </div>
-    <div style="padding:0 24px 24px">
-      
-        href="/page/store/store.html?slug=${storeData.slug}"
-        class="btn btn-outline"
-        target="_blank"
+
+    <div style="padding:0 24px 24px;display:flex;gap:12px;flex-wrap:wrap">
+      <button
+        class="btn btn-primary"
+        onclick="copyStoreUrl('${storeUrl}')"
       >
-        🌐 View Public Store Page
+        📋 Copy Store Link
+      </button>
+      
+        href="${storeUrl}"
+        target="_blank"
+        class="btn btn-outline"
+      >
+        🌐 View Public Store
       </a>
+      <button
+        class="btn btn-outline"
+        onclick="shareStore('${storeUrl}', '${storeData.businessName}')"
+      >
+        📤 Share Store
+      </button>
     </div>
   `;
 }
-
 function copyStoreUrl(url) {
   navigator.clipboard.writeText(url).then(() => {
     showAlert('Store URL copied to clipboard!', 'success');
+  }).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showAlert('Store URL copied!', 'success');
   });
+}
+
+// Share via Web Share API (works on mobile)
+function shareStore(url, storeName) {
+  if (navigator.share) {
+    navigator.share({
+      title: `${storeName} on Supamart`,
+      text: `Check out ${storeName} on Supamart!`,
+      url: url
+    }).catch(() => {
+      copyStoreUrl(url);
+    });
+  } else {
+    // Fallback — just copy
+    copyStoreUrl(url);
+    showAlert('Link copied! Share it anywhere.', 'success');
+  }
 }
 
 // ─── Product Modal ────────────────────────────────────────

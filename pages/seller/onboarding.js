@@ -146,23 +146,42 @@ document.getElementById('onboardForm').addEventListener('submit', async (e) => {
 
     // Show success state
     const card = document.querySelector('.onboard-card');
-    card.innerHTML = `
-      <div class="success-state">
-        <div class="success-icon">🎉</div>
-        <h2>Your Store is Live!</h2>
-        <p>Welcome to Supamart, <strong>${businessName}</strong></p>
-        <p>Your unique store link:</p>
-        <div class="store-url-box">
-          supamart.com/store/${data.store.slug}
-        </div>
-        <button
-          class="btn btn-primary btn-full"
-          onclick="window.location.href='/pages/seller/dashboard.html'"
-        >
-          Go to My Dashboard →
-        </button>
-      </div>
-    `;
+   const storeUrl = `${window.location.origin}/pages/store/store.html?slug=${data.store.slug}`;
+
+card.innerHTML = `
+  <div class="success-state">
+    <div class="success-icon">🎉</div>
+    <h2>Your Store is Live!</h2>
+    <p>Welcome to Supamart, <strong>${businessName}</strong></p>
+    <p>Your unique store link:</p>
+    <div class="store-url-box" id="storeUrlBox">
+      🔗 ${storeUrl}
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button
+        class="btn btn-outline"
+        style="flex:1"
+        onclick="copyUrl('${storeUrl}')"
+      >
+        📋 Copy Link
+      </button>
+      
+        href="${storeUrl}"
+        target="_blank"
+        class="btn btn-outline"
+        style="flex:1;display:inline-flex;align-items:center;justify-content:center"
+      >
+        🌐 Preview Store
+      </a>
+    </div>
+    <button
+      class="btn btn-primary btn-full"
+      onclick="window.location.href='/pages/seller/dashboard.html'"
+    >
+      Go to My Dashboard →
+    </button>
+  </div>
+`;
 
   } catch (error) {
     showAlert(error.message || 'Something went wrong. Please try again.');
@@ -170,3 +189,18 @@ document.getElementById('onboardForm').addEventListener('submit', async (e) => {
     setLoading(false);
   }
 });
+
+function copyUrl(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    showAlert('Store URL copied to clipboard!', 'success');
+  }).catch(() => {
+    // Fallback for browsers that block clipboard
+    const el = document.createElement('textarea');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showAlert('Store URL copied!', 'success');
+  });
+}
