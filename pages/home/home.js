@@ -164,7 +164,7 @@ function createProductCard(product) {
 
 // ─── Actions ──────────────────────────────────────────────
 function viewProduct(productId) {
-  window.location.href = `../product/product.html?id=${productId}`;
+  window.location.href = `/pages/product/product.html?id=${productId}`;
 }
 
 function contactSeller(phone, productName, storeName) {

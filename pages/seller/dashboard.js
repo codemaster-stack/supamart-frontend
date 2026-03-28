@@ -1,7 +1,7 @@
 requireAuth();
 const user = getUser();
 if (user?.role !== 'seller') {
-  window.location.href = '../home/index.html';
+ window.location.href = '/pages/home/index.html';
 }
 
 let storeData = null;
@@ -30,7 +30,7 @@ async function loadStoreData() {
   } catch (error) {
     // No store yet
     if (error.message.includes('not created')) {
-      window.location.href = 'onboarding.html';
+      window.location.href = '/pages/seller/onboarding.html';
     }
   }
 }
@@ -248,7 +248,7 @@ function loadStoreTab() {
     </div>
     <div style="padding:0 24px 24px">
       
-        href="../store/store.html?slug=${storeData.slug}"
+        href="/page/store/store.html?slug=${storeData.slug}"
         class="btn btn-outline"
         target="_blank"
       >

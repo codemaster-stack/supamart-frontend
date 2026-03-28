@@ -45,15 +45,15 @@ loginForm.addEventListener('submit', async (e) => {
     showAlert('Login successful! Redirecting...', 'success');
 
     setTimeout(() => {
-      const role = data.user.role;
-      if (role === 'admin') {
-        window.location.href = '../admin/admin.html';
-      } else if (role === 'seller') {
-        window.location.href = '../seller/dashboard.html';
-      } else {
-        window.location.href = '../home/index.html';
-      }
-    }, 1200);
+  const role = data.user.role;
+  if (role === 'admin') {
+    window.location.href = '/pages/admin/admin.html';
+  } else if (role === 'seller') {
+    window.location.href = '/pages/seller/dashboard.html';
+  } else {
+    window.location.href = '/pages/home/index.html';
+  }
+}, 1200);
 
   } catch (error) {
     showAlert(error.message || 'Login failed. Please try again.');

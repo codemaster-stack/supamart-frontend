@@ -124,11 +124,10 @@ function switchImage(src, thumbEl) {
 // ─── Go to Checkout ───────────────────────────────────────
 function goToCheckout() {
   if (!isLoggedIn()) {
-    window.location.href = `../auth/login.html`;
+    window.location.href = '/pages/auth/login.html';
     return;
   }
-  window.location.href =
-    `../checkout/checkout.html?id=${productData._id}`;
+ window.location.href = `/pages/checkout/checkout.html?id=${productData._id}`;
 }
 
 // ─── Contact Seller ───────────────────────────────────────

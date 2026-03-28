@@ -3,7 +3,7 @@ requireAuth();
 
 const user = getUser();
 if (user && user.role !== 'seller') {
-  window.location.href = '../home/index.html';
+  window.location.href = '/pages/home/index.html';
 }
 
 // Check if seller already has a store
@@ -12,7 +12,7 @@ if (user && user.role !== 'seller') {
     const data = await apiRequest('/stores/my-store', 'GET');
     if (data.store) {
       // Already has a store, go to dashboard
-      window.location.href = 'dashboard.html';
+     window.location.href = '/pages/seller/dashboard.html';
     }
   } catch (e) {
     // No store yet — stay on this page
@@ -157,7 +157,7 @@ document.getElementById('onboardForm').addEventListener('submit', async (e) => {
         </div>
         <button
           class="btn btn-primary btn-full"
-          onclick="window.location.href='dashboard.html'"
+          onclick="window.location.href='/pages/seller/dashboard.html'"
         >
           Go to My Dashboard →
         </button>

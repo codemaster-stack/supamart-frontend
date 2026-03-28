@@ -57,12 +57,12 @@ registerForm.addEventListener('submit', async (e) => {
 
     // Redirect based on role
     setTimeout(() => {
-      if (data.user.role === 'seller') {
-        window.location.href = '../seller/onboarding.html';
-      } else {
-        window.location.href = '../home/index.html';
-      }
-    }, 1500);
+  if (data.user.role === 'seller') {
+    window.location.href = '/pages/seller/onboarding.html';
+  } else {
+    window.location.href = '/pages/home/index.html';
+  }
+}, 1500);
 
   } catch (error) {
     showAlert(error.message || 'Registration failed. Please try again.');

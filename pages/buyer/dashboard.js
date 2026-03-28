@@ -1,10 +1,10 @@
 requireAuth();
 const user = getUser();
 if (user?.role === 'admin') {
-  window.location.href = '../admin/admin.html';
+  window.location.href = '/pages/admin/admin.html';
 }
 if (user?.role === 'seller') {
-  window.location.href = '../seller/dashboard.html';
+ window.location.href = '/pages/seller/dashboard.html';
 }
 
 let allOrders = [];
@@ -70,7 +70,7 @@ function renderOrders(orders) {
     container.innerHTML = `
       <div class="empty-text">
         <p>No orders yet.</p>
-        <a href="../home/index.html"
+        <a href="/page/home/index.html"
            style="color:var(--primary);font-weight:600">
           Start Shopping →
         </a>

@@ -2,7 +2,7 @@ requireAuth();
 
 const user = getUser();
 if (user?.role === 'seller') {
-  window.location.href = '../home/index.html';
+  window.location.href = 'page/home/index.html';
 }
 
 let productData = null;
@@ -13,7 +13,7 @@ let wallets = {};
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
 
-if (!productId) window.location.href = '../home/index.html';
+if (!productId) window.location.href = '/pages/home/index.html';
 
 // ─── Init ─────────────────────────────────────────────────
 (async () => {
@@ -119,8 +119,7 @@ async function placeOrder() {
     showAlert('Order placed successfully! Payment is held in escrow.', 'success');
 
     setTimeout(() => {
-      window.location.href =
-        `../buyer/dashboard.html`;
+      window.location.href = '/pages/buyer/dashboard.html';
     }, 2000);
 
   } catch (error) {

@@ -12,7 +12,7 @@ if (user) {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
   if (!slug) {
-    window.location.href = '../home/index.html';
+   window.location.href = '/pages/home/index.html';
     return;
   }
 
@@ -30,7 +30,7 @@ async function loadStore(slug) {
     renderStoreHeader(storeData);
     await loadStoreProducts(storeData._id);
   } catch (error) {
-    window.location.href = '../home/index.html';
+    window.location.href = '/pages/home/index.html';
   }
 }
 
@@ -88,7 +88,7 @@ async function loadStoreProducts(storeId) {
           <div class="product-price">${formatted}</div>
           <div class="product-actions">
             <button class="btn btn-primary"
-              onclick="window.location.href='../product/product.html?id=${product._id}'">
+              onclick="window.location.href='/page/product/product.html?id=${product._id}'">
               View
             </button>
             <button class="btn-whatsapp-sm"
