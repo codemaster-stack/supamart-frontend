@@ -32,17 +32,15 @@ function setupNavbar() {
 async function initCurrency() {
   userCurrency = await getUserCurrency();
   exchangeRates = await getExchangeRates();
-
-  // Set currency dropdown
   const select = document.getElementById('currencySelect');
   if (select) select.value = userCurrency;
 }
 
-// Switch currency manually
+// ─── Switch Currency ──────────────────────────────────────
 function switchCurrency(currency) {
   userCurrency = currency;
   localStorage.setItem('supamart_currency', currency);
-  loadProducts(true); // reload with new currency
+  loadProducts(true);
 }
 
 // ─── Load Products ────────────────────────────────────────
@@ -67,37 +65,42 @@ async function loadProducts(reset = false) {
     const data = await apiRequest(`/products?${params}`);
     const { products, pagination } = data;
 
-    // Clear skeletons on first load
     if (currentPage === 1) {
       document.getElementById('productGrid').innerHTML = '';
     }
 
+    const emptyState = document.getElementById('emptyState');
+    const loadMoreWrapper = document.getElementById('loadMoreWrapper');
+    const productCount = document.getElementById('productCount');
+
     if (products.length === 0 && currentPage === 1) {
-      document.getElementById('emptyState').style.display = 'block';
-      document.getElementById('loadMoreWrapper').style.display = 'none';
+      if (emptyState) emptyState.style.display = 'block';
+      if (loadMoreWrapper) loadMoreWrapper.style.display = 'none';
       return;
     }
 
-    document.getElementById('emptyState').style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
 
-    // Render products
     products.forEach(product => {
       const card = createProductCard(product);
       document.getElementById('productGrid').appendChild(card);
     });
 
-    // Update count
-    document.getElementById('productCount').textContent =
-      `${pagination.total} product${pagination.total !== 1 ? 's' : ''} found`;
+    if (productCount) {
+      productCount.textContent =
+        `${pagination.total} product${pagination.total !== 1 ? 's' : ''} found`;
+    }
 
-    // Show/hide load more
     const hasMore = currentPage < pagination.pages;
-    document.getElementById('loadMoreWrapper').style.display =
-      hasMore ? 'block' : 'none';
+    if (loadMoreWrapper) {
+      loadMoreWrapper.style.display = hasMore ? 'block' : 'none';
+    }
 
   } catch (error) {
+    console.error('Load products error:', error);
     document.getElementById('productGrid').innerHTML = `
-      <p style="color:var(--danger);grid-column:1/-1;text-align:center;padding:40px">
+      <p style="color:var(--danger);grid-column:1/-1;
+                text-align:center;padding:40px">
         Failed to load products. Please refresh the page.
       </p>
     `;
@@ -109,7 +112,6 @@ function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'product-card';
 
-  // Compute price
   const price = computeDisplayPrice(
     product.basePriceNGN,
     userCurrency,
@@ -117,19 +119,17 @@ function createProductCard(product) {
   );
   const formattedPrice = formatPrice(price, userCurrency);
 
-  // Image
   const imageHTML = product.images && product.images.length > 0
-    ? `<img
-        class="product-image"
-        src="${product.images[0]}"
-        alt="${product.name}"
-        loading="lazy"
-      />`
+    ? `<img class="product-image"
+         src="${product.images[0]}"
+         alt=""
+         loading="lazy"
+       />`
     : `<div class="product-image-placeholder">📦</div>`;
 
-  // Store logo
   const storeLogo = product.storeId?.logoUrl
-    ? `<img class="store-logo-small" src="${product.storeId.logoUrl}" alt=""/>`
+    ? `<img class="store-logo-small"
+         src="${product.storeId.logoUrl}" alt=""/>`
     : `<div class="store-logo-small"></div>`;
 
   card.innerHTML = `
@@ -144,47 +144,35 @@ function createProductCard(product) {
       <div class="product-name">${product.name}</div>
       <div class="product-price">${formattedPrice}</div>
       <div class="product-actions">
-        <button class="btn btn-primary" id="view-${product._id}">
-          View
-        </button>
-        <button class="btn btn-outline" id="wa-${product._id}">
-          💬
-        </button>
+        <button class="btn btn-primary view-btn">View</button>
+        <button class="btn btn-outline wa-btn">💬</button>
       </div>
     </div>
   `;
 
-  // Attach events safely — no inline onclick
-  card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
-  const cleanId = String(product._id).trim();
-  console.log('Navigating to product:', cleanId);
-  window.location.href = `/pages/product/product.html?id=${cleanId}`;
-});
+  // View button — safe event listener
+  card.querySelector('.view-btn').addEventListener('click', () => {
+    window.location.href =
+      `/pages/product/product.html?id=${product._id}`;
+  });
 
-  card.querySelector(`#wa-${product._id}`).addEventListener('click', () => {
+  // WhatsApp button — safe event listener
+  card.querySelector('.wa-btn').addEventListener('click', () => {
     const phone = product.storeId?.phoneNumber;
-    if (!phone) return alert('Seller contact not available');
+    if (!phone) {
+      alert('Seller contact not available');
+      return;
+    }
     const cleanPhone = phone.replace(/\D/g, '');
     const message = encodeURIComponent(
-      `Hi! I'm interested in "${product.name}" from "${product.storeId?.businessName}" on Supamart.`
+      `Hi! I'm interested in "${product.name}" from ` +
+      `"${product.storeId?.businessName}" on Supamart.`
     );
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   });
 
   return card;
 }
-// ─── Actions ──────────────────────────────────────────────
-// function viewProduct(productId) {
-//   window.location.href = `/pages/product/product.html?id=${productId}`;
-// }
-
-// function contactSeller(phone, productName, storeName) {
-//   if (!phone) return alert('Seller contact not available');
-//   const message = encodeURIComponent(
-//     `Hi! I'm interested in "${productName}" from your store "${storeName}" on Supamart.`
-//   );
-//   window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-// }
 
 // ─── Search ───────────────────────────────────────────────
 function handleSearch(value) {
@@ -199,9 +187,13 @@ function handleSearch(value) {
 async function loadMore() {
   currentPage++;
   const btn = document.getElementById('loadMoreBtn');
-  btn.textContent = 'Loading...';
-  btn.disabled = true;
+  if (btn) {
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+  }
   await loadProducts();
-  btn.textContent = 'Load More Products';
-  btn.disabled = false;
+  if (btn) {
+    btn.textContent = 'Load More Products';
+    btn.disabled = false;
+  }
 }
