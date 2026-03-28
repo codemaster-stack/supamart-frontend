@@ -156,8 +156,10 @@ function createProductCard(product) {
 
   // Attach events safely — no inline onclick
   card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
-    window.location.href = `/pages/product/product.html?id=${product._id}`;
-  });
+  const cleanId = String(product._id).trim();
+  console.log('Navigating to product:', cleanId);
+  window.location.href = `/pages/product/product.html?id=${cleanId}`;
+});
 
   card.querySelector(`#wa-${product._id}`).addEventListener('click', () => {
     const phone = product.storeId?.phoneNumber;

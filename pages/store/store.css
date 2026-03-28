@@ -176,3 +176,20 @@
   .store-hero { flex-direction: column; text-align: center; }
   .store-hero-info h1 { font-size: 24px; }
 }
+
+.btn-back-market {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-back-market:hover {
+  background: rgba(255,255,255,0.25);
+}

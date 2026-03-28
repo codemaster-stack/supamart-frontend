@@ -98,10 +98,10 @@ async function loadStoreProducts(storeId) {
   `;
 
   // Attach events safely
-  card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
-    window.location.href = `/pages/product/product.html?id=${product._id}`;
-  });
-
+ card.querySelector(`#view-${product._id}`).addEventListener('click', () => {
+  const cleanId = String(product._id).trim();
+  window.location.href = `/pages/product/product.html?id=${cleanId}`;
+});
   card.querySelector(`#wa-${product._id}`).addEventListener('click', () => {
     const phone = storeData.phoneNumber.replace(/\D/g, '');
     const msg = encodeURIComponent(
