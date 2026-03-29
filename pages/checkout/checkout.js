@@ -2,7 +2,7 @@ requireAuth();
 
 const user = getUser();
 if (user?.role === 'seller') {
-  window.location.href = 'page/home/index.html';
+  window.location.href = '/pages/home/index.html';
 }
 
 let productData = null;
@@ -13,7 +13,12 @@ let wallets = {};
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
 
-if (!productId) window.location.href = '/pages/home/index.html';
+console.log('Checkout page loaded. Product ID:', productId);
+
+if (!productId || productId === 'undefined') {
+  console.error('No product ID found');
+  window.location.href = '/pages/home/index.html';
+}
 
 // ─── Init ─────────────────────────────────────────────────
 (async () => {

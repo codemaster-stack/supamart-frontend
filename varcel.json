@@ -1,16 +1,53 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "**/*.html",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
+    {
+      "src": "/pages/checkout/checkout.html",
+      "dest": "/pages/checkout/checkout.html"
+    },
+    {
+      "src": "/pages/product/product.html",
+      "dest": "/pages/product/product.html"
+    },
+    {
+      "src": "/pages/store/store.html",
+      "dest": "/pages/store/store.html"
+    },
+    {
+      "src": "/pages/home/index.html",
+      "dest": "/pages/home/index.html"
+    },
+    {
+      "src": "/pages/auth/login.html",
+      "dest": "/pages/auth/login.html"
+    },
+    {
+      "src": "/pages/auth/register.html",
+      "dest": "/pages/auth/register.html"
+    },
+    {
+      "src": "/pages/seller/onboarding.html",
+      "dest": "/pages/seller/onboarding.html"
+    },
+    {
+      "src": "/pages/seller/dashboard.html",
+      "dest": "/pages/seller/dashboard.html"
+    },
+    {
+      "src": "/pages/buyer/dashboard.html",
+      "dest": "/pages/buyer/dashboard.html"
+    },
+    {
+      "src": "/pages/admin/admin.html",
+      "dest": "/pages/admin/admin.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
   ]
 }
-

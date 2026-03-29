@@ -179,9 +179,13 @@ function goToCheckout() {
     window.location.href = '/pages/auth/login.html';
     return;
   }
-  if (!productData) return;
-  window.location.href =
-    `/pages/checkout/checkout.html?id=${productData._id}`;
+  if (!productData) {
+    alert('Product data not loaded yet. Please wait.');
+    return;
+  }
+  const productId = productData._id;
+  console.log('Going to checkout with product ID:', productId);
+  window.location.href = `/pages/checkout/checkout.html?id=${productId}`;
 }
 
 // ─── Contact Seller on WhatsApp ───────────────────────────
