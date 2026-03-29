@@ -1,4 +1,5 @@
 // ─── CHANGE THIS TO YOUR RENDER URL AFTER DEPLOYMENT ───
+const PAYSTACK_PUBLIC_KEY = 'pk_test_94b54a31c0eb8533fa6f30cff6990f0b2f061ee3';
 const BASE_URL = 'https://supamart-backend.onrender.com/api';
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
