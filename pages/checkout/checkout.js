@@ -1,7 +1,18 @@
-requireAuth();
-
+// Check login first
 const user = getUser();
-if (user?.role === 'seller') {
+const token = getToken();
+
+console.log('Checkout - User:', user);
+console.log('Checkout - Token:', token);
+
+if (!token || !user) {
+  console.log('Not logged in - redirecting to login');
+  window.location.href = '/pages/auth/login.html';
+}
+
+// Sellers cannot checkout
+if (user && user.role === 'seller') {
+  console.log('Seller cannot checkout - redirecting home');
   window.location.href = '/pages/home/index.html';
 }
 
@@ -13,25 +24,12 @@ let wallets = {};
 const params = new URLSearchParams(window.location.search);
 const productId = params.get('id');
 
-console.log('Checkout page loaded. Product ID:', productId);
+console.log('Checkout page - Product ID:', productId);
 
-if (!productId || productId === 'undefined') {
-  console.error('No product ID found');
+if (!productId || productId === 'undefined' || productId === 'null') {
+  console.error('No product ID - redirecting home');
   window.location.href = '/pages/home/index.html';
 }
-
-// ─── Init ─────────────────────────────────────────────────
-(async () => {
-  userCurrency = await getUserCurrency();
-  exchangeRates = await getExchangeRates();
-
-  document.getElementById('checkoutCurrency').value = userCurrency;
-
-  await loadProduct();
-  await loadWallets();
-  updateCheckoutPrice();
-})();
-
 // ─── Load Product ─────────────────────────────────────────
 async function loadProduct() {
   try {
