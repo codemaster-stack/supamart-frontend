@@ -27,6 +27,9 @@
         <a href="#" class="nav-item" onclick="showTab('escrow')">
           🔒 Escrow
         </a>
+          <a href="#" class="nav-item" onclick="showTab('disputes')">
+    ⚠️     Disputes
+          </a>
       </nav>
       <div class="sidebar-footer">
         <a href="../home/index.html" class="nav-item">🌐 Marketplace</a>
@@ -132,8 +135,35 @@
           </div>
         </div>
       </div>
+                   
+                 <!-- ── Disputes ── -->
+      <div class="tab-content hidden" id="tab-disputes">
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>Dispute Cases</h3>
+            <span style="font-size:13px;color:var(--gray-500)">
+              Review and resolve buyer/seller disputes
+            </span>
+          </div>
+          <div id="disputesList">
+            <p class="empty-text">Loading...</p>
+          </div>
+        </div>
+      </div>
 
     </main>
+  </div>
+
+  <!-- Dispute Detail Modal -->
+  <div class="modal-overlay" id="disputeModal">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header">
+        <h2>Dispute Details</h2>
+        <button class="modal-close" onclick="closeDisputeModal()">✕</button>
+      </div>
+      <div id="disputeModalContent" style="padding:24px">
+      </div>
+    </div>
   </div>
 
   <script src="../../assets/js/api.js"></script>

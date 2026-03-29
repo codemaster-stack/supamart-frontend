@@ -160,13 +160,28 @@ async function confirmDelivery(orderId) {
 
 // ─── Raise Dispute ────────────────────────────────────────
 async function raiseDispute(orderId) {
-  if (!confirm(
-    'Raise a dispute for this order?\n\nAdmin will review within 24 hours.'
-  )) return;
+  const reason = prompt(
+    'Please describe the issue with your order:\n\n' +
+    'Examples:\n' +
+    '- Item not received\n' +
+    '- Wrong item delivered\n' +
+    '- Item damaged\n' +
+    '- Item not as described'
+  );
+
+  if (!reason || reason.trim() === '') {
+    showAlert('Please provide a reason for the dispute');
+    return;
+  }
 
   try {
-    await apiRequest(`/orders/${orderId}/dispute`, 'PATCH');
-    showAlert('Dispute raised. Admin will review shortly.', 'success');
+    await apiRequest(`/orders/${orderId}/dispute`, 'PATCH', {
+      reason: reason.trim()
+    });
+    showAlert(
+      'Dispute raised. Admin will review within 24 hours.',
+      'success'
+    );
     await loadOrders();
   } catch (error) {
     showAlert(error.message || 'Failed to raise dispute');
