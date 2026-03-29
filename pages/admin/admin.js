@@ -91,15 +91,23 @@ async function loadUsers() {
               </td>
               <td>${new Date(u.createdAt).toLocaleDateString()}</td>
               <td>
-                ${u.role !== 'admin' ? `
-                  <button
-                    class="btn-xs ${u.isActive ? 'btn-ban' : 'btn-unban'}"
-                    onclick="toggleBan('${u._id}', ${u.isActive})"
-                  >
-                    ${u.isActive ? 'Ban' : 'Unban'}
-                  </button>
-                ` : '—'}
-              </td>
+  ${u.role !== 'admin' ? `
+    <div style="display:flex;gap:6px">
+      <button
+        class="btn-xs ${u.isActive ? 'btn-ban' : 'btn-unban'}"
+        onclick="toggleBan('${u._id}', ${u.isActive})"
+      >
+        ${u.isActive ? '🚫 Ban' : '✅ Unban'}
+      </button>
+      <button
+        class="btn-xs btn-delete-user"
+        onclick="deleteUser('${u._id}', '${u.name}')"
+      >
+        🗑 Delete
+      </button>
+    </div>
+  ` : '—'}
+</td>
             </tr>
           `).join('')}
         </tbody>
@@ -123,6 +131,36 @@ async function toggleBan(userId, isCurrentlyActive) {
     await loadUsers();
   } catch (error) {
     showAlert(error.message || 'Failed to update user');
+  }
+}
+
+async function deleteUser(userId, userName) {
+  if (!confirm(
+    `⚠️ PERMANENTLY DELETE "${userName}"?\n\n` +
+    `This will also delete:\n` +
+    `• Their store\n` +
+    `• Their wallets\n` +
+    `• Their products (deactivated)\n\n` +
+    `This action CANNOT be undone.`
+  )) return;
+
+  // Double confirm for safety
+  const typed = prompt(
+    `Type DELETE to confirm permanently deleting "${userName}":`
+  );
+
+  if (typed !== 'DELETE') {
+    showAlert('Deletion cancelled — you must type DELETE to confirm');
+    return;
+  }
+
+  try {
+    await apiRequest(`/admin/users/${userId}`, 'DELETE');
+    showAlert(`User "${userName}" deleted successfully`, 'success');
+    await loadUsers();
+    await loadStats();
+  } catch (error) {
+    showAlert(error.message || 'Failed to delete user');
   }
 }
 

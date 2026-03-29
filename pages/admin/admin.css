@@ -258,3 +258,12 @@
   .sidebar { display: none; }
   .dashboard-main { margin-left: 0; padding: 20px 16px; }
 }
+
+.btn-delete-user {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-delete-user:hover {
+  background: #fecaca;
+}
