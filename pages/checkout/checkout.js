@@ -1,4 +1,4 @@
-// Check login first
+// ─── Auth Check ───────────────────────────────────────────
 const user = getUser();
 const token = getToken();
 
@@ -6,16 +6,14 @@ console.log('Checkout - User:', user);
 console.log('Checkout - Token:', token);
 
 if (!token || !user) {
-  console.log('Not logged in - redirecting to login');
   window.location.href = '/pages/auth/login.html';
 }
 
-// Sellers cannot checkout
 if (user && user.role === 'seller') {
-  console.log('Seller cannot checkout - redirecting home');
   window.location.href = '/pages/home/index.html';
 }
 
+// ─── State ────────────────────────────────────────────────
 let productData = null;
 let userCurrency = 'NGN';
 let exchangeRates = {};
@@ -27,16 +25,42 @@ const productId = params.get('id');
 console.log('Checkout page - Product ID:', productId);
 
 if (!productId || productId === 'undefined' || productId === 'null') {
-  console.error('No product ID - redirecting home');
   window.location.href = '/pages/home/index.html';
 }
+
+// ─── Init ─────────────────────────────────────────────────
+(async () => {
+  try {
+    userCurrency = await getUserCurrency();
+    exchangeRates = await getExchangeRates();
+
+    const currencySelect = document.getElementById('checkoutCurrency');
+    if (currencySelect) currencySelect.value = userCurrency;
+
+    if (productId) {
+      await loadProduct();
+      await loadWallets();
+      updateCheckoutPrice();
+    }
+  } catch (err) {
+    console.error('Checkout init error:', err);
+  }
+})();
+
 // ─── Load Product ─────────────────────────────────────────
 async function loadProduct() {
   try {
+    console.log('Loading product:', productId);
     const data = await apiRequest(`/products/${productId}`);
-    productData = data.product;
 
+    if (!data || !data.product) {
+      showAlert('Product not found');
+      return;
+    }
+
+    productData = data.product;
     const store = productData.storeId;
+
     const imgHTML = productData.images?.length > 0
       ? `<img class="summary-img" src="${productData.images[0]}" alt=""/>`
       : `<div class="summary-img">📦</div>`;
@@ -46,17 +70,23 @@ async function loadProduct() {
         ${imgHTML}
         <div class="summary-info">
           <h3>${productData.name}</h3>
-          <p>${productData.description?.substring(0, 100)}...</p>
+          <p>${productData.description?.substring(0, 120)}...</p>
         </div>
       </div>
       <div class="summary-store">
         🏪 Sold by <strong>${store?.businessName || 'Unknown Store'}</strong>
-        · 📍 ${store?.location || ''}
+        &nbsp;·&nbsp; 📍 ${store?.location || ''}
       </div>
     `;
 
   } catch (error) {
-    showAlert('Product not found');
+    console.error('Load product error:', error);
+    document.getElementById('summaryCard').innerHTML = `
+      <p style="padding:20px;text-align:center;color:var(--danger)">
+        Failed to load product.
+        <a href="/pages/home/index.html">Go back</a>
+      </p>
+    `;
   }
 }
 
@@ -69,15 +99,16 @@ async function loadWallets() {
     });
     updateWalletDisplay();
   } catch (error) {
-    console.error('Failed to load wallets');
+    console.error('Failed to load wallets:', error);
   }
 }
 
+// ─── Update Wallet Display ────────────────────────────────
 function updateWalletDisplay() {
   const currency = document.getElementById('checkoutCurrency').value;
   const balance = wallets[currency] || 0;
-  document.getElementById('walletBalance').textContent =
-    formatPrice(balance, currency);
+  const balanceEl = document.getElementById('walletBalance');
+  if (balanceEl) balanceEl.textContent = formatPrice(balance, currency);
 }
 
 // ─── Update Price ─────────────────────────────────────────
@@ -88,17 +119,21 @@ function updateCheckoutPrice() {
   const qty = parseInt(document.getElementById('quantity').value) || 1;
 
   userCurrency = currency;
-  const baseNGN = productData.basePriceNGN;
-  const unitPrice = computeDisplayPrice(baseNGN, currency, exchangeRates);
-  const fee = unitPrice - (baseNGN * (currency === 'NGN' ? 1 : (exchangeRates[currency] || 1) * 3));
+
+  const unitPrice = computeDisplayPrice(
+    productData.basePriceNGN,
+    currency,
+    exchangeRates
+  );
   const total = unitPrice * qty;
 
-  document.getElementById('baseDisplay').textContent =
-    formatPrice(baseNGN * (currency === 'NGN' ? 1 : (exchangeRates[currency] || 0.001) * 3), currency);
-  document.getElementById('feeDisplay').textContent =
-    formatPrice(unitPrice * 0.0909 * qty, currency);
-  document.getElementById('totalDisplay').textContent =
-    formatPrice(total, currency);
+  const baseEl = document.getElementById('baseDisplay');
+  const qtyEl = document.getElementById('qtyDisplay');
+  const totalEl = document.getElementById('totalDisplay');
+
+  if (baseEl) baseEl.textContent = formatPrice(unitPrice, currency);
+  if (qtyEl) qtyEl.textContent = qty;
+  if (totalEl) totalEl.textContent = formatPrice(total, currency);
 
   updateWalletDisplay();
 }
@@ -119,7 +154,7 @@ async function placeOrder() {
       currency
     });
 
-    showAlert('Order placed successfully! Payment is held in escrow.', 'success');
+    showAlert('Order placed! Payment is held in escrow.', 'success');
 
     setTimeout(() => {
       window.location.href = '/pages/buyer/dashboard.html';
@@ -132,7 +167,7 @@ async function placeOrder() {
   }
 }
 
-// ─── Fund Wallet (Mock) ───────────────────────────────────
+// ─── Fund Wallet Modal ────────────────────────────────────
 function showFundModal() {
   document.getElementById('fundModal').classList.add('open');
 }
@@ -150,7 +185,10 @@ async function fundWallet() {
   }
 
   try {
-    await apiRequest('/wallets/fund', 'POST', { currency, amount: Number(amount) });
+    await apiRequest('/wallets/fund', 'POST', {
+      currency,
+      amount: Number(amount)
+    });
     closeFundModal();
     await loadWallets();
     updateCheckoutPrice();
@@ -165,12 +203,18 @@ function showAlert(message, type = 'error') {
   const box = type === 'error'
     ? document.getElementById('alertBox')
     : document.getElementById('successBox');
+  if (!box) return;
   box.textContent = message;
   box.className = `alert alert-${type} show`;
-  if (type === 'success') return;
-  setTimeout(() => box.classList.remove('show'), 5000);
+  if (type !== 'success') {
+    setTimeout(() => box.classList.remove('show'), 5000);
+  }
 }
 
-document.getElementById('fundModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('fundModal')) closeFundModal();
-});
+// Close fund modal on overlay click
+const fundModal = document.getElementById('fundModal');
+if (fundModal) {
+  fundModal.addEventListener('click', (e) => {
+    if (e.target === fundModal) closeFundModal();
+  });
+}
