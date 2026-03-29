@@ -4,14 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Checkout — Supamart</title>
-  <link rel="stylesheet" href="../../assets/css/global.css"/>
-  <link rel="stylesheet" href="checkout.css"/>
+  <link rel="stylesheet" href="/assets/css/global.css"/>
+  <link rel="stylesheet" href="/pages/checkout/checkout.css"/>
 </head>
 <body>
 
   <nav class="navbar">
     <div class="container navbar-inner">
-      <a href="../home/index.html" class="navbar-logo">Supa<span>mart</span></a>
+      <a href="/pages/home/index.html" class="navbar-logo">Supa<span>mart</span></a>
       <ul class="navbar-links">
         <li><a href="/pages/home/index.html">← Continue Shopping</a></li>
       </ul>
@@ -48,8 +48,34 @@
         <div class="alert alert-error" id="alertBox"></div>
         <div class="alert alert-success" id="successBox"></div>
 
-        <!-- Currency & Wallet -->
-        <div class="payment-card">
+      
+        <!-- Payment Method Tabs -->
+       <div class="payment-tabs">
+         <button
+           class="pay-tab active"
+           id="tabWallet"
+           onclick="switchPayTab('wallet')"
+           >
+           💰 Wallet
+          </button>
+          <button
+             class="pay-tab"
+             id="tabCard"
+             onclick="switchPayTab('card')"
+             >
+             💳 Card
+          </button>
+          <button
+           class="pay-tab"
+           id="tabBank"
+            onclick="switchPayTab('bank')"
+            >
+           🏦 Bank Transfer
+          </button>
+        </div>
+
+        <!-- ── Wallet Payment ── -->
+        <div class="payment-card" id="walletPaySection">
 
           <div class="form-group">
             <label>Pay With Currency</label>
@@ -77,23 +103,27 @@
               oninput="updateCheckoutPrice()"
             />
           </div>
-      <div class="price-breakdown" id="priceBreakdown">
-         <div class="price-row">
-           <span>Price per item</span>
-           <span id="baseDisplay">—</span>
-         </div>
-         <div class="price-row">
-           <span>Quantity</span>
-           <span id="qtyDisplay">1</span>
-         </div>
-         <div class="price-row total">
-           <span>Total Amount</span>
-           <span id="totalDisplay">—</span>
-        </div>
-      </div>
-          <!-- Fund wallet (mock) -->
+
+          <div class="price-breakdown" id="priceBreakdown">
+            <div class="price-row">
+              <span>Price per item</span>
+              <span id="baseDisplay">—</span>
+            </div>
+            <div class="price-row">
+              <span>Quantity</span>
+              <span id="qtyDisplay">1</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span id="totalDisplay">—</span>
+            </div>
+          </div>
+
           <div class="fund-wallet-section">
-            <p>Need to top up? <a href="#" onclick="showFundModal()">Fund Wallet</a></p>
+            <p>
+              Need to top up?
+              <a href="#" onclick="showFundModal()">Fund Wallet</a>
+            </p>
           </div>
 
           <button
@@ -102,6 +132,172 @@
             onclick="placeOrder()"
           >
             🔒 Place Order (Escrow Protected)
+          </button>
+
+        </div>
+
+        <!-- ── Card Payment ── -->
+        <div class="payment-card" id="cardPaySection" style="display:none">
+
+          <div class="form-group">
+            <label>Pay With Currency</label>
+            <select id="cardCurrency" onchange="updateCardPrice()">
+              <option value="NGN">₦ Nigerian Naira (NGN)</option>
+              <option value="USD">$ US Dollar (USD)</option>
+              <option value="GBP">£ British Pound (GBP)</option>
+              <option value="EUR">€ Euro (EUR)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Quantity</label>
+            <input
+              type="number"
+              id="cardQuantity"
+              value="1"
+              min="1"
+              max="99"
+              oninput="updateCardPrice()"
+            />
+          </div>
+
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Price per item</span>
+              <span id="cardBaseDisplay">—</span>
+            </div>
+            <div class="price-row">
+              <span>Quantity</span>
+              <span id="cardQtyDisplay">1</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span id="cardTotalDisplay">—</span>
+            </div>
+          </div>
+
+          <div class="card-notice">
+            🔒 Secured by Paystack. Your card details are never stored.
+          </div>
+
+          <button
+            class="btn btn-primary btn-full"
+            id="cardPayBtn"
+            onclick="payWithCard()"
+          >
+            💳 Pay with Card
+          </button>
+        </div>
+          <!-- ── Bank Transfer ── -->
+        <div class="payment-card" id="bankPaySection" style="display:none">
+
+          <div class="bank-notice">
+            <strong>🏦 Bank Transfer (NGN Only)</strong>
+            <p>
+              A unique account number will be generated for this payment.
+              Transfer the exact amount within 30 minutes.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label>Quantity</label>
+            <input
+              type="number"
+              id="bankQuantity"
+              value="1"
+              min="1"
+              max="99"
+              oninput="updateBankPrice()"
+            />
+          </div>
+
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Price per item</span>
+              <span id="bankBaseDisplay">—</span>
+            </div>
+            <div class="price-row">
+              <span>Quantity</span>
+              <span id="bankQtyDisplay">1</span>
+            </div>
+            <div class="price-row total">
+              <span>Total to Transfer</span>
+              <span id="bankTotalDisplay">—</span>
+            </div>
+          </div>
+
+          <!-- Transfer Details (shown after initialization) -->
+          <div
+            id="transferDetails"
+            style="display:none"
+          >
+            <div class="transfer-details-box">
+              <h4>💳 Transfer Details</h4>
+              <div class="transfer-row">
+                <span>Bank</span>
+                <strong id="transferBank">—</strong>
+              </div>
+              <div class="transfer-row">
+                <span>Account Number</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <strong id="transferAccount">—</strong>
+                  <button
+                    onclick="copyAccountNumber()"
+                    style="background:var(--gray-100);border:none;
+                           padding:4px 10px;border-radius:6px;
+                           font-size:12px;cursor:pointer;font-weight:600"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div class="transfer-row">
+                <span>Account Name</span>
+                <strong id="transferName">—</strong>
+              </div>
+              <div class="transfer-row">
+                <span>Amount</span>
+                <strong id="transferAmount"
+                  style="color:var(--primary);font-size:18px">
+                  —
+                </strong>
+              </div>
+              <div class="transfer-row">
+                <span>Expires In</span>
+                <strong id="transferTimer"
+                  style="color:var(--danger)">
+                  30:00
+                </strong>
+              </div>
+            </div>
+
+            <div class="transfer-steps">
+              <p>📱 <strong>How to pay:</strong></p>
+              <ol>
+                <li>Open your banking app</li>
+                <li>Transfer the <strong>exact amount</strong> shown above</li>
+                <li>Use the account number provided</li>
+                <li>Payment confirms automatically</li>
+              </ol>
+            </div>
+
+            <button
+              class="btn btn-outline btn-full"
+              id="checkPaymentBtn"
+              onclick="checkBankPayment()"
+              style="margin-bottom:12px"
+            >
+              🔄 I Have Transferred — Check Payment
+            </button>
+
+          </div>
+
+          <button
+            class="btn btn-primary btn-full"
+            id="bankPayBtn"
+            onclick="initBankTransfer()"
+          >
+            🏦 Get Transfer Details
           </button>
 
         </div>
@@ -131,7 +327,12 @@
         </div>
         <div class="form-group">
           <label>Amount</label>
-          <input type="number" id="fundAmount" placeholder="e.g. 50000" min="1"/>
+          <input
+            type="number"
+            id="fundAmount"
+            placeholder="e.g. 50000"
+            min="1"
+          />
         </div>
         <button class="btn btn-primary btn-full" onclick="fundWallet()">
           Add Funds
@@ -140,7 +341,7 @@
     </div>
   </div>
 
- <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/api.js"></script>
   <script src="/assets/js/auth.js"></script>
   <script src="/pages/checkout/checkout.js"></script>
 

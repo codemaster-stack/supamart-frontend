@@ -198,6 +198,272 @@ async function fundWallet() {
   }
 }
 
+
+// ─── Payment Tab Switch ───────────────────────────────────
+function switchPayTab(tab) {
+  const walletSection = document.getElementById('walletPaySection');
+  const cardSection = document.getElementById('cardPaySection');
+  const tabWallet = document.getElementById('tabWallet');
+  const tabCard = document.getElementById('tabCard');
+
+  if (tab === 'wallet') {
+    walletSection.style.display = 'block';
+    cardSection.style.display = 'none';
+    tabWallet.classList.add('active');
+    tabCard.classList.remove('active');
+  } else {
+    walletSection.style.display = 'none';
+    cardSection.style.display = 'block';
+    tabCard.classList.add('active');
+    tabWallet.classList.remove('active');
+    updateCardPrice();
+  }
+}
+
+// ─── Update Card Price ────────────────────────────────────
+function updateCardPrice() {
+  if (!productData) return;
+
+  const currency = document.getElementById('cardCurrency').value;
+  const qty = parseInt(document.getElementById('cardQuantity').value) || 1;
+
+  const unitPrice = computeDisplayPrice(
+    productData.basePriceNGN,
+    currency,
+    exchangeRates
+  );
+  const total = unitPrice * qty;
+
+  const baseEl = document.getElementById('cardBaseDisplay');
+  const qtyEl = document.getElementById('cardQtyDisplay');
+  const totalEl = document.getElementById('cardTotalDisplay');
+
+  if (baseEl) baseEl.textContent = formatPrice(unitPrice, currency);
+  if (qtyEl) qtyEl.textContent = qty;
+  if (totalEl) totalEl.textContent = formatPrice(total, currency);
+}
+
+// ─── Pay with Card (Paystack) ─────────────────────────────
+async function payWithCard() {
+  if (!productData) return;
+
+  const currency = document.getElementById('cardCurrency').value;
+  const quantity = parseInt(document.getElementById('cardQuantity').value) || 1;
+
+  const btn = document.getElementById('cardPayBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Initializing payment...';
+
+  try {
+    const data = await apiRequest('/payments/initialize', 'POST', {
+      productId,
+      quantity,
+      currency
+    });
+
+    // Redirect to Paystack payment page
+    window.location.href = data.authorizationUrl;
+
+  } catch (error) {
+    showAlert(error.message || 'Failed to initialize payment');
+    btn.disabled = false;
+    btn.innerHTML = '💳 Pay with Card';
+  }
+}
+
+      // ─── Bank Transfer Tab ────────────────────────────────────
+let bankReference = null;
+let transferTimer = null;
+
+function updateBankPrice() {
+  if (!productData) return;
+
+  const qty = parseInt(document.getElementById('bankQuantity').value) || 1;
+  const unitPrice = computeDisplayPrice(
+    productData.basePriceNGN,
+    'NGN',
+    exchangeRates
+  );
+  const total = unitPrice * qty;
+
+  const baseEl = document.getElementById('bankBaseDisplay');
+  const qtyEl = document.getElementById('bankQtyDisplay');
+  const totalEl = document.getElementById('bankTotalDisplay');
+
+  if (baseEl) baseEl.textContent = formatPrice(unitPrice, 'NGN');
+  if (qtyEl) qtyEl.textContent = qty;
+  if (totalEl) totalEl.textContent = formatPrice(total, 'NGN');
+}
+
+// ─── Initialize Bank Transfer ─────────────────────────────
+async function initBankTransfer() {
+  if (!productData) return;
+
+  const quantity = parseInt(document.getElementById('bankQuantity').value) || 1;
+  const btn = document.getElementById('bankPayBtn');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating account...';
+
+  try {
+    const data = await apiRequest('/payments/bank-transfer', 'POST', {
+      productId,
+      quantity,
+      currency: 'NGN'
+    });
+
+    bankReference = data.reference;
+
+    // Show transfer details
+    const details = data.transferDetails;
+    document.getElementById('transferBank').textContent =
+      details.bank || 'See payment page';
+    document.getElementById('transferAccount').textContent =
+      details.accountNumber || 'See payment page';
+    document.getElementById('transferName').textContent =
+      details.accountName || 'Paystack';
+    document.getElementById('transferAmount').textContent =
+      formatPrice(details.amount, 'NGN');
+
+    document.getElementById('transferDetails').style.display = 'block';
+    btn.style.display = 'none';
+
+    // If Paystack redirects for bank transfer
+    if (data.authorizationUrl) {
+      window.location.href = data.authorizationUrl;
+      return;
+    }
+
+    // Start 30 minute countdown
+    startTransferTimer(30 * 60);
+
+    showAlert(
+      'Transfer details generated! Please transfer the exact amount.',
+      'success'
+    );
+
+  } catch (error) {
+    showAlert(error.message || 'Failed to generate transfer details');
+    btn.disabled = false;
+    btn.innerHTML = '🏦 Get Transfer Details';
+  }
+}
+
+// ─── Countdown Timer ──────────────────────────────────────
+function startTransferTimer(seconds) {
+  clearInterval(transferTimer);
+  let remaining = seconds;
+
+  transferTimer = setInterval(() => {
+    remaining--;
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    const timerEl = document.getElementById('transferTimer');
+    if (timerEl) {
+      timerEl.textContent =
+        `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    if (remaining <= 0) {
+      clearInterval(transferTimer);
+      if (timerEl) timerEl.textContent = 'Expired';
+      showAlert('Transfer window expired. Please start again.');
+      document.getElementById('transferDetails').style.display = 'none';
+      document.getElementById('bankPayBtn').style.display = 'block';
+      document.getElementById('bankPayBtn').disabled = false;
+      document.getElementById('bankPayBtn').textContent =
+        '🏦 Get Transfer Details';
+      bankReference = null;
+    }
+  }, 1000);
+}
+
+// ─── Copy Account Number ──────────────────────────────────
+function copyAccountNumber() {
+  const accountNumber = document.getElementById('transferAccount').textContent;
+  navigator.clipboard.writeText(accountNumber).then(() => {
+    showAlert('Account number copied!', 'success');
+  }).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = accountNumber;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showAlert('Account number copied!', 'success');
+  });
+}
+
+// ─── Check Bank Payment ───────────────────────────────────
+async function checkBankPayment() {
+  if (!bankReference) {
+    showAlert('No active transfer found');
+    return;
+  }
+
+  const btn = document.getElementById('checkPaymentBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Checking payment...';
+
+  try {
+    const data = await apiRequest('/payments/verify', 'POST', {
+      reference: bankReference
+    });
+
+    clearInterval(transferTimer);
+    showAlert('Payment confirmed! Redirecting...', 'success');
+
+    setTimeout(() => {
+      window.location.href = '/pages/buyer/dashboard.html';
+    }, 2000);
+
+  } catch (error) {
+    // Payment not confirmed yet
+    if (error.message.includes('not successful')) {
+      showAlert(
+        'Payment not confirmed yet. Please complete the transfer and try again.'
+      );
+    } else {
+      showAlert(error.message || 'Could not verify payment');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '🔄 I Have Transferred — Check Payment';
+  }
+}
+
+// ─── Update switchPayTab to include bank ──────────────────
+function switchPayTab(tab) {
+  const walletSection = document.getElementById('walletPaySection');
+  const cardSection = document.getElementById('cardPaySection');
+  const bankSection = document.getElementById('bankPaySection');
+  const tabWallet = document.getElementById('tabWallet');
+  const tabCard = document.getElementById('tabCard');
+  const tabBank = document.getElementById('tabBank');
+
+  // Hide all
+  walletSection.style.display = 'none';
+  cardSection.style.display = 'none';
+  bankSection.style.display = 'none';
+
+  // Remove active from all tabs
+  tabWallet.classList.remove('active');
+  tabCard.classList.remove('active');
+  tabBank.classList.remove('active');
+
+  if (tab === 'wallet') {
+    walletSection.style.display = 'block';
+    tabWallet.classList.add('active');
+  } else if (tab === 'card') {
+    cardSection.style.display = 'block';
+    tabCard.classList.add('active');
+    updateCardPrice();
+  } else if (tab === 'bank') {
+    bankSection.style.display = 'block';
+    tabBank.classList.add('active');
+    updateBankPrice();
+  }
+}
+
 // ─── Alert Helpers ────────────────────────────────────────
 function showAlert(message, type = 'error') {
   const box = type === 'error'
