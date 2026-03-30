@@ -290,20 +290,27 @@ async function fundWallet() {
   const currency = document.getElementById('fundCurrency').value;
   const amount = document.getElementById('fundAmount').value;
 
-  if (!amount || amount <= 0) {
-    return showAlert('Enter a valid amount');
+  if (!amount || amount < 100) {
+    return showAlert('Minimum funding amount is ₦100');
   }
 
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Initializing...';
+
   try {
-    await apiRequest('/wallets/fund', 'POST', {
+    const data = await apiRequest('/wallets/fund-initialize', 'POST', {
       currency,
       amount: Number(amount)
     });
-    showAlert(`${currency} wallet funded!`, 'success');
-    document.getElementById('fundAmount').value = '';
-    await loadWallets();
+
+    // Redirect to Paystack
+    window.location.href = data.authorizationUrl;
+
   } catch (error) {
-    showAlert(error.message || 'Failed to fund wallet');
+    showAlert(error.message || 'Failed to initialize wallet funding');
+    btn.disabled = false;
+    btn.innerHTML = '💳 Fund via Card';
   }
 }
 

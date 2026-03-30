@@ -1,6 +1,18 @@
 {
   "version": 2,
   "routes": [
+       {
+       "src": "/pages/cart/cart.html",
+       "dest": "/pages/cart/cart.html"
+      },
+      {
+       "src": "/pages/checkout/cart-checkout.html",
+       "dest": "/pages/checkout/cart-checkout.html"
+     },
+    {
+      "src": "/pages/buyer/wallet-verify.html",
+      "dest": "/pages/buyer/wallet-verify.html"
+    },
     {
       "src": "/pages/checkout/checkout.html",
       "dest": "/pages/checkout/checkout.html"

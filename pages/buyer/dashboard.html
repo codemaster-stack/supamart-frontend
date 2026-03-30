@@ -92,45 +92,38 @@
       </div>
 
       <!-- ── TAB: Wallets ── -->
-      <div class="tab-content hidden" id="tab-wallets">
-        <div class="wallets-grid" id="walletsGrid">
-          <p class="empty-text">Loading wallets...</p>
-        </div>
-        <div class="section-card" style="margin-top:24px">
-          <div class="section-card-header">
-            <h3>Fund Wallet (Test Mode)</h3>
-          </div>
-          <div style="padding:24px">
-            <p style="color:var(--gray-500);font-size:13px;margin-bottom:20px">
-              Real payment gateway will be integrated later.
-              Use this to add test funds.
-            </p>
-            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end">
-              <div class="form-group" style="margin:0">
-                <label>Currency</label>
-                <select id="fundCurrency">
-                  <option value="NGN">NGN</option>
-                  <option value="USD">USD</option>
-                  <option value="GBP">GBP</option>
-                  <option value="EUR">EUR</option>
-                </select>
-              </div>
-              <div class="form-group" style="margin:0">
-                <label>Amount</label>
-                <input
-                  type="number"
-                  id="fundAmount"
-                  placeholder="e.g. 50000"
-                  min="1"
-                />
-              </div>
-              <button class="btn btn-primary" onclick="fundWallet()">
-                Add Funds
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="section-card" style="margin-top:24px">
+  <div class="section-card-header">
+    <h3>Fund Wallet via Paystack</h3>
+  </div>
+  <div style="padding:24px">
+    <p style="color:var(--gray-500);font-size:13px;margin-bottom:20px">
+      Fund your NGN wallet securely via card or bank transfer.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;
+                gap:12px;align-items:end">
+      <div class="form-group" style="margin:0">
+        <label>Currency</label>
+        <select id="fundCurrency">
+          <option value="NGN">NGN</option>
+        </select>
       </div>
+      <div class="form-group" style="margin:0">
+        <label>Amount (₦)</label>
+        <input
+          type="number"
+          id="fundAmount"
+          placeholder="e.g. 50000"
+          min="100"
+        />
+      </div>
+      <button class="btn btn-primary" onclick="fundWallet()">
+        💳 Fund via Card
+      </button>
+    </div>
+  </div>
+</div>
+
 
       <!-- ── TAB: Profile ── -->
       <div class="tab-content hidden" id="tab-profile">

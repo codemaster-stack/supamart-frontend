@@ -145,24 +145,30 @@ function createProductCard(product) {
       <div class="product-price">${formattedPrice}</div>
       <div class="product-actions">
         <button class="btn btn-primary view-btn">View</button>
+        <button class="btn btn-outline cart-btn">🛒 Add</button>
         <button class="btn btn-outline wa-btn">💬</button>
       </div>
     </div>
   `;
 
-  // View button — safe event listener
   card.querySelector('.view-btn').addEventListener('click', () => {
     window.location.href =
       `/pages/product/product.html?id=${product._id}`;
   });
 
-  // WhatsApp button — safe event listener
+  card.querySelector('.cart-btn').addEventListener('click', () => {
+    const count = addToCart(
+      product,
+      product.storeId?.businessName,
+      product.storeId?.slug,
+      product.storeId?.phoneNumber
+    );
+    showCartToast(product.name, count);
+  });
+
   card.querySelector('.wa-btn').addEventListener('click', () => {
     const phone = product.storeId?.phoneNumber;
-    if (!phone) {
-      alert('Seller contact not available');
-      return;
-    }
+    if (!phone) { alert('Seller contact not available'); return; }
     const cleanPhone = phone.replace(/\D/g, '');
     const message = encodeURIComponent(
       `Hi! I'm interested in "${product.name}" from ` +
@@ -170,7 +176,6 @@ function createProductCard(product) {
     );
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   });
-
   return card;
 }
 
@@ -196,4 +201,55 @@ async function loadMore() {
     btn.textContent = 'Load More Products';
     btn.disabled = false;
   }
+}
+
+// ─── Cart Toast Notification ──────────────────────────────
+function showCartToast(productName, count) {
+  const existing = document.getElementById('cartToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'cartToast';
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--secondary);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.3s ease;
+    max-width: 320px;
+  `;
+
+  toast.innerHTML = `
+    <span>🛒</span>
+    <div>
+      <div>${productName} added to cart</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px">
+        ${count} item${count !== 1 ? 's' : ''} in cart
+      </div>
+    </div>
+    <a href="/pages/cart/cart.html"
+       style="background:var(--primary);color:white;padding:6px 14px;
+              border-radius:8px;font-size:12px;text-decoration:none;
+              white-space:nowrap">
+      View Cart
+    </a>
+  `;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
 }

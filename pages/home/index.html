@@ -45,6 +45,23 @@
         <li id="navOrders" style="display:none">
           <a href="../buyer/dashboard.html">My Orders</a>
         </li>
+
+               <li>
+    <a href="/pages/cart/cart.html" class="cart-nav-btn">
+      🛒 Cart
+      <span id="cartBadge" style="
+        display:none;
+        background:var(--primary);
+        color:white;
+        font-size:11px;
+        font-weight:700;
+        padding:2px 7px;
+        border-radius:50px;
+        margin-left:4px;
+      ">0</span>
+    </a>
+  </li>
+
         <li id="navLogin"><a href="../auth/login.html">Sign In</a></li>
         <li id="navRegister">
           <a href="../auth/register.html" class="btn btn-primary" style="padding:8px 16px">
@@ -129,10 +146,9 @@
 
     </div>
   </section>
-
-  <script src="../../assets/js/api.js"></script>
-  <script src="../../assets/js/auth.js"></script>
-  <script src="home.js"></script>
-
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/cart.js"></script>
+  <script src="/pages/home/home.js"></script>
 </body>
 </html>

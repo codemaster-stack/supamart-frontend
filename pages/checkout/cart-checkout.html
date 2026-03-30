@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — Supamart</title>
+  <link rel="stylesheet" href="/assets/css/global.css"/>
+  <link rel="stylesheet" href="/pages/checkout/checkout.css"/>
+  <link rel="stylesheet" href="/pages/cart/cart.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="/pages/home/index.html" class="navbar-logo">
+        Supa<span>mart</span>
+      </a>
+      <ul class="navbar-links">
+        <li>
+          <a href="/pages/cart/cart.html">← Back to Cart</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="checkout-main container">
+
+    <div class="checkout-layout">
+
+      <!-- Left: Order Items -->
+      <div class="order-summary">
+        <h2>Order Items</h2>
+        <div id="checkoutItemsList"></div>
+
+        <div class="escrow-notice" style="margin-top:20px">
+          <h4>🔒 Escrow Protection</h4>
+          <ul>
+            <li>Each order is placed with its seller separately</li>
+            <li>All payments held in escrow until delivery</li>
+            <li>Confirm delivery to release funds to sellers</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right: Payment -->
+      <div class="payment-section">
+        <h2>Payment</h2>
+
+        <div class="alert alert-error" id="alertBox"></div>
+        <div class="alert alert-success" id="successBox"></div>
+
+        <!-- Payment Tabs -->
+        <div class="payment-tabs">
+          <button class="pay-tab active" id="tabWallet"
+            onclick="switchPayTab('wallet')">
+            💰 Wallet
+          </button>
+          <button class="pay-tab" id="tabCard"
+            onclick="switchPayTab('card')">
+            💳 Card
+          </button>
+          <button class="pay-tab" id="tabBank"
+            onclick="switchPayTab('bank')">
+            🏦 Bank Transfer
+          </button>
+        </div>
+
+        <!-- Wallet Payment -->
+        <div class="payment-card" id="walletPaySection">
+          <div class="form-group">
+            <label>Pay With Currency</label>
+            <select id="checkoutCurrency" onchange="updateSummary()">
+              <option value="NGN">₦ NGN</option>
+              <option value="USD">$ USD</option>
+              <option value="GBP">£ GBP</option>
+              <option value="EUR">€ EUR</option>
+            </select>
+          </div>
+          <div class="wallet-balance-box">
+            <div class="wallet-label">Your Wallet Balance</div>
+            <div class="wallet-amount" id="walletBalance">—</div>
+          </div>
+          <div class="price-breakdown">
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span id="walletTotal">—</span>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary btn-full"
+            id="placeAllOrdersBtn"
+            onclick="placeAllOrders()"
+          >
+            🔒 Place All Orders (Escrow Protected)
+          </button>
+        </div>
+
+        <!-- Card Payment -->
+        <div class="payment-card" id="cardPaySection" style="display:none">
+          <div class="form-group">
+            <label>Pay With Currency</label>
+            <select id="cardCurrency" onchange="updateCardSummary()">
+              <option value="NGN">₦ NGN</option>
+              <option value="USD">$ USD</option>
+              <option value="GBP">£ GBP</option>
+              <option value="EUR">€ EUR</option>
+            </select>
+          </div>
+          <div class="price-breakdown">
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span id="cardTotalDisplay">—</span>
+            </div>
+          </div>
+          <div class="card-notice">
+            🔒 Note: Card payment processes one item at a time.
+            You will be redirected per item.
+          </div>
+          <button
+            class="btn btn-primary btn-full"
+            id="cardPayBtn"
+            onclick="payCartWithCard()"
+          >
+            💳 Pay with Card
+          </button>
+        </div>
+
+        <!-- Bank Transfer -->
+        <div class="payment-card" id="bankPaySection" style="display:none">
+          <div class="bank-notice">
+            <strong>🏦 Bank Transfer (NGN Only)</strong>
+            <p>
+              Note: Bank transfer processes one item at a time.
+              You will get account details per item.
+            </p>
+          </div>
+          <div class="price-breakdown">
+            <div class="price-row total">
+              <span>Total (NGN)</span>
+              <span id="bankTotalDisplay">—</span>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary btn-full"
+            id="bankPayBtn"
+            onclick="payCartWithBank()"
+          >
+            🏦 Get Transfer Details
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/cart.js"></script>
+  <script src="/pages/checkout/cart-checkout.js"></script>
+
+</body>
+</html>
