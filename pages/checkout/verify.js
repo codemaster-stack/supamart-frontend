@@ -55,8 +55,13 @@ function showResult(type, message, order = null) {
           </div>
         </div>
       ` : ''}
-      <p style="color:var(--gray-400);font-size:13px;margin-bottom:24px">
+      <p style="color:var(--gray-400);font-size:13px;margin-bottom:8px">
         Your payment is held in escrow until delivery
+      </p>
+      <p style="color:var(--primary);font-size:13px;
+                font-weight:600;margin-bottom:24px">
+        Redirecting to your orders in
+        <span id="countdown">5</span> seconds...
       </p>
       
         href="/pages/buyer/dashboard.html"
@@ -64,7 +69,26 @@ function showResult(type, message, order = null) {
       >
         View My Orders →
       </a>
+      
+        href="/pages/home/index.html"
+        class="btn btn-outline btn-full"
+        style="margin-top:10px"
+      >
+        Continue Shopping
+      </a>
     `;
+
+    // Auto countdown redirect
+    let seconds = 5;
+    const countdownEl = document.getElementById('countdown');
+    const timer = setInterval(() => {
+      seconds--;
+      if (countdownEl) countdownEl.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        window.location.href = '/pages/buyer/dashboard.html';
+      }
+    }, 1000);
   } else {
     container.innerHTML = `
       <div style="font-size:64px;margin-bottom:16px">❌</div>
@@ -77,9 +101,16 @@ function showResult(type, message, order = null) {
       </p>
       
         href="/pages/home/index.html"
-        class="btn btn-outline btn-full"
+        class="btn btn-primary btn-full"
       >
         ← Back to Home
+      </a>
+      
+        href="/pages/buyer/dashboard.html"
+        class="btn btn-outline btn-full"
+        style="margin-top:10px"
+      >
+        View My Orders
       </a>
     `;
   }
