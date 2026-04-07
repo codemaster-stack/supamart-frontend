@@ -97,36 +97,30 @@ function renderRecentOrders(orders) {
 
 // ─── Tab Navigation ───────────────────────────────────────
 function showTab(tab) {
-  // Hide all tabs
   document.querySelectorAll('.tab-content').forEach(t =>
     t.classList.add('hidden')
   );
-
-  // Remove active from all nav items
   document.querySelectorAll('.nav-item').forEach(n =>
     n.classList.remove('active')
   );
-
-  // Show selected tab
   document.getElementById(`tab-${tab}`).classList.remove('hidden');
 
-  // Tab titles
   const titles = {
     overview: ['Overview', `Managing: ${storeData?.businessName || ''}`],
     products: ['My Products', 'Manage your product listings'],
     orders: ['Orders', 'Track and manage your orders'],
+    wallets: ['My Wallets', 'View your earnings by currency'],
     store: ['My Store', 'View and edit your store details']
   };
 
   document.getElementById('dashTitle').textContent = titles[tab][0];
   document.getElementById('dashSubtitle').textContent = titles[tab][1];
 
-  // Load tab data
   if (tab === 'products') loadProductsTab();
   if (tab === 'orders') loadOrdersTab();
+  if (tab === 'wallets') loadWalletsTab();
   if (tab === 'store') loadStoreTab();
 }
-
 // ─── Products Tab ─────────────────────────────────────────
 async function loadProductsTab() {
   const container = document.getElementById('productsList');
@@ -447,6 +441,34 @@ async function deleteProduct(productId) {
     await loadOverviewStats();
   } catch (error) {
     showAlert(error.message || 'Failed to delete product');
+  }
+}
+
+      // ─── Load Seller Wallets ──────────────────────────────────
+async function loadWalletsTab() {
+  const container = document.getElementById('sellerWalletsGrid');
+
+  try {
+    const data = await apiRequest('/wallets');
+    const wallets = data.wallets;
+
+    const icons = {
+      NGN: '🇳🇬', USD: '🇺🇸', GBP: '🇬🇧', EUR: '🇪🇺'
+    };
+
+    container.innerHTML = wallets.map(w => `
+      <div class="wallet-card ${w.currency.toLowerCase()}">
+        <div class="wallet-currency-icon">${icons[w.currency]}</div>
+        <div class="wallet-currency">${w.currency}</div>
+        <div class="wallet-balance">
+          ${formatPrice(w.balance, w.currency)}
+        </div>
+      </div>
+    `).join('');
+
+  } catch (error) {
+    container.innerHTML =
+      '<p class="empty-text">Failed to load wallets</p>';
   }
 }
 

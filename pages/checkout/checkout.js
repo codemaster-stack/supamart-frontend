@@ -37,11 +37,15 @@ if (!productId || productId === 'undefined' || productId === 'null') {
     const currencySelect = document.getElementById('checkoutCurrency');
     if (currencySelect) currencySelect.value = userCurrency;
 
-    if (productId) {
+   if (productId) {
       await loadProduct();
       await loadWallets();
+      if (productData?.storeId?._id) {
+        await loadDeliveryFee(productData.storeId._id);
+      }
       updateCheckoutPrice();
     }
+    
   } catch (err) {
     console.error('Checkout init error:', err);
   }
@@ -125,14 +129,21 @@ function updateCheckoutPrice() {
     currency,
     exchangeRates
   );
-  const total = unitPrice * qty;
+  const subtotal = unitPrice * qty;
+  const total = subtotal + (currentDeliveryFee || 0);
 
   const baseEl = document.getElementById('baseDisplay');
   const qtyEl = document.getElementById('qtyDisplay');
   const totalEl = document.getElementById('totalDisplay');
+  const deliveryEl = document.getElementById('deliveryFeeDisplay');
 
   if (baseEl) baseEl.textContent = formatPrice(unitPrice, currency);
   if (qtyEl) qtyEl.textContent = qty;
+  if (deliveryEl) {
+    deliveryEl.textContent = currentDeliveryFee > 0
+      ? formatPrice(currentDeliveryFee, currency)
+      : 'Select delivery option';
+  }
   if (totalEl) totalEl.textContent = formatPrice(total, currency);
 
   updateWalletDisplay();
@@ -142,6 +153,16 @@ function updateCheckoutPrice() {
 async function placeOrder() {
   const currency = document.getElementById('checkoutCurrency').value;
   const quantity = parseInt(document.getElementById('quantity').value) || 1;
+  const deliveryAddress = document.getElementById('deliveryAddress')?.value || '';
+  const deliveryTypeEl = document.querySelector(
+    'input[name="deliveryType"]:checked'
+  );
+  const deliveryType = deliveryTypeEl?.value || 'within_country';
+
+  if (!deliveryAddress.trim()) {
+    showAlert('Please enter your delivery address');
+    return;
+  }
 
   const btn = document.getElementById('placeOrderBtn');
   btn.disabled = true;
@@ -151,7 +172,9 @@ async function placeOrder() {
     const data = await apiRequest('/orders', 'POST', {
       productId,
       quantity,
-      currency
+      currency,
+      deliveryType,
+      deliveryAddress
     });
 
     showAlert('Order placed! Payment is held in escrow.', 'success');
@@ -483,4 +506,117 @@ if (fundModal) {
   fundModal.addEventListener('click', (e) => {
     if (e.target === fundModal) closeFundModal();
   });
+}
+
+// ─── Load Delivery Fee ────────────────────────────────────
+async function loadDeliveryFee(storeId) {
+  try {
+    const currency = document.getElementById('checkoutCurrency')?.value
+      || 'NGN';
+
+    const data = await apiRequest(
+      `/orders/delivery-fee?storeId=${storeId}&currency=${currency}`
+    );
+
+    if (!data.canDeliver) {
+      showAlert(data.message);
+      document.getElementById('placeOrderBtn').disabled = true;
+      return null;
+    }
+
+    // Show delivery options
+    const priceBreakdown = document.getElementById('priceBreakdown');
+    if (priceBreakdown) {
+      priceBreakdown.innerHTML += `
+        <div style="margin-top:16px;padding-top:16px;
+                    border-top:1px solid var(--gray-100)">
+          <div style="font-size:13px;font-weight:700;
+                      color:var(--gray-700);margin-bottom:10px">
+            Delivery Option
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:10px;
+                          padding:10px;border:2px solid var(--gray-200);
+                          border-radius:8px;cursor:pointer">
+              <input type="radio" name="deliveryType"
+                value="within_city" onchange="updateDeliveryFee(${data.fees.withinCity})"/>
+              <div>
+                <div style="font-weight:600;font-size:14px">
+                  Within City
+                </div>
+                <div style="font-size:12px;color:var(--gray-400)">
+                  ${formatPrice(data.fees.withinCity, currency)}
+                </div>
+              </div>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;
+                          padding:10px;border:2px solid var(--gray-200);
+                          border-radius:8px;cursor:pointer">
+              <input type="radio" name="deliveryType"
+                value="within_state" onchange="updateDeliveryFee(${data.fees.withinState})"/>
+              <div>
+                <div style="font-weight:600;font-size:14px">
+                  Within State
+                </div>
+                <div style="font-size:12px;color:var(--gray-400)">
+                  ${formatPrice(data.fees.withinState, currency)}
+                </div>
+              </div>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;
+                          padding:10px;border:2px solid var(--primary);
+                          border-radius:8px;cursor:pointer;
+                          background:var(--primary-light)">
+              <input type="radio" name="deliveryType"
+                value="within_country" checked
+                onchange="updateDeliveryFee(${data.fees.withinCountry})"/>
+              <div>
+                <div style="font-weight:600;font-size:14px">
+                  Nationwide Delivery
+                </div>
+                <div style="font-size:12px;color:var(--gray-400)">
+                  ${formatPrice(data.fees.withinCountry, currency)}
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <label style="font-size:13px;font-weight:600;
+                        color:var(--gray-700);display:block;
+                        margin-bottom:6px">
+            Delivery Address
+          </label>
+          <input
+            type="text"
+            id="deliveryAddress"
+            placeholder="Enter your full delivery address"
+            style="width:100%;padding:10px 14px;
+                   border:2px solid var(--gray-200);
+                   border-radius:8px;font-size:14px"
+          />
+        </div>
+      `;
+
+      // Set default delivery fee
+      updateDeliveryFee(data.fees.withinCountry);
+    }
+
+    return data;
+
+  } catch (error) {
+    console.error('Delivery fee error:', error);
+    return null;
+  }
+}
+
+// ─── Update Delivery Fee Display ──────────────────────────
+let currentDeliveryFee = 0;
+
+function updateDeliveryFee(fee) {
+  currentDeliveryFee = fee;
+  const currency = document.getElementById('checkoutCurrency')?.value
+    || 'NGN';
+  updateCheckoutPrice();
 }

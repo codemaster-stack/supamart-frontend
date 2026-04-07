@@ -14,19 +14,22 @@
 
     <aside class="sidebar">
       <div class="sidebar-brand">Supa<span>mart</span></div>
-      <nav class="sidebar-nav">
+     <nav class="sidebar-nav">
         <a href="#" class="nav-item active" onclick="showTab('overview')">
-          📊 Overview
+         📊 Overview
         </a>
         <a href="#" class="nav-item" onclick="showTab('products')">
-          📦 My Products
+         📦 My Products
         </a>
         <a href="#" class="nav-item" onclick="showTab('orders')">
-          🧾 Orders
+         🧾 Orders
         </a>
-        <a href="#" class="nav-item" onclick="showTab('store')">
-          🏪 My Store
+        <a href="#" class="nav-item" onclick="showTab('wallets')">
+         💰 My Wallets
         </a>
+         <a href="#" class="nav-item" onclick="showTab('store')">
+           🏪 My Store
+         </a>
       </nav>
       <div class="sidebar-footer">
         <a href="../home/index.html" class="nav-item">🌐 View Marketplace</a>
@@ -141,6 +144,13 @@
           <div id="storeInfo">
             <p class="empty-text">Loading store info...</p>
           </div>
+        </div>
+      </div>
+
+          <!-- ── TAB: Wallets ── -->
+      <div class="tab-content hidden" id="tab-wallets">
+        <div class="wallets-grid" id="sellerWalletsGrid">
+          <p class="empty-text">Loading wallets...</p>
         </div>
       </div>
 

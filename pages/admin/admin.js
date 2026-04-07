@@ -24,7 +24,8 @@ function showTab(tab) {
     users: ['Users', 'Manage all users and sellers'],
     orders: ['Orders', 'View all platform orders'],
     escrow: ['Escrow', 'Manage held and disputed payments'],
-    disputes: ['Disputes', 'Review and resolve buyer/seller disputes']
+    disputes: ['Disputes', 'Review and resolve disputes'],
+    wallets: ['Wallets', 'Platform wallet overview']
   };
 
   document.getElementById('dashTitle').textContent = titles[tab][0];
@@ -34,8 +35,8 @@ function showTab(tab) {
   if (tab === 'orders') loadOrders();
   if (tab === 'escrow') loadEscrow();
   if (tab === 'disputes') loadDisputes();
+  if (tab === 'wallets') loadAdminWallets();
 }
-
 // ─── Stats ────────────────────────────────────────────────
 async function loadStats() {
   try {
@@ -633,6 +634,59 @@ document.getElementById('disputeModal').addEventListener('click', (e) => {
     closeDisputeModal();
   }
 });
+
+       // ─── Admin Wallets ────────────────────────────────────────
+async function loadAdminWallets() {
+  const container = document.getElementById('adminWalletsList');
+  try {
+    const data = await apiRequest('/admin/wallets');
+    const wallets = data.wallets;
+
+    if (wallets.length === 0) {
+      container.innerHTML =
+        '<p class="empty-text">No wallet records found</p>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>NGN</th>
+            <th>USD</th>
+            <th>GBP</th>
+            <th>EUR</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${wallets.map(w => `
+            <tr>
+              <td><strong>${w.userName}</strong><br>
+                <span style="font-size:12px;color:var(--gray-400)">
+                  ${w.userEmail}
+                </span>
+              </td>
+              <td>
+                <span class="role-badge role-${w.userRole}">
+                  ${w.userRole}
+                </span>
+              </td>
+              <td>₦${w.NGN?.toFixed(2) || '0.00'}</td>
+              <td>$${w.USD?.toFixed(2) || '0.00'}</td>
+              <td>£${w.GBP?.toFixed(2) || '0.00'}</td>
+              <td>€${w.EUR?.toFixed(2) || '0.00'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (error) {
+    container.innerHTML =
+      '<p class="empty-text">Failed to load wallets</p>';
+  }
+}
 
 // ─── Alert ────────────────────────────────────────────────
 function showAlert(message, type = 'error') {

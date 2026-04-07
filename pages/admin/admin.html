@@ -30,6 +30,9 @@
           <a href="#" class="nav-item" onclick="showTab('disputes')">
     ⚠️     Disputes
           </a>
+         <a href="#" class="nav-item" onclick="showTab('wallets')">
+           💰 Wallets
+         </a>
       </nav>
       <div class="sidebar-footer">
         <a href="../home/index.html" class="nav-item">🌐 Marketplace</a>
@@ -146,6 +149,21 @@
             </span>
           </div>
           <div id="disputesList">
+            <p class="empty-text">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+                      <!-- ── Wallets ── -->
+      <div class="tab-content hidden" id="tab-wallets">
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>All Seller Wallets</h3>
+            <span style="font-size:13px;color:var(--gray-500)">
+              Platform wallet overview
+            </span>
+          </div>
+          <div id="adminWalletsList">
             <p class="empty-text">Loading...</p>
           </div>
         </div>

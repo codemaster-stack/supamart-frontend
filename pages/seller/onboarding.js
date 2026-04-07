@@ -112,11 +112,21 @@ document.getElementById('onboardForm').addEventListener('submit', async (e) => {
   setLoading(true);
 
   try {
+    
     // Use FormData because we're uploading a file
     const formData = new FormData();
-    formData.append('businessName', businessName);
-    formData.append('location', location);
-    formData.append('phoneNumber', phoneNumber);
+   const countrySelect = document.getElementById('country');
+   const countryCode = countrySelect?.value || 'NG';
+   const countryNames = {
+  NG: 'Nigeria', US: 'United States',
+  GB: 'United Kingdom', DE: 'Germany'
+   };
+
+formData.append('businessName', businessName);
+formData.append('location', location);
+formData.append('phoneNumber', phoneNumber);
+formData.append('country', countryNames[countryCode] || 'Nigeria');
+formData.append('countryCode', countryCode);
     if (logoFile) formData.append('logo', logoFile);
 
     // Special fetch for multipart form (file upload)
