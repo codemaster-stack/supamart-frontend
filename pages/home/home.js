@@ -8,6 +8,7 @@ let searchTimer = null;
 // ─── Init ─────────────────────────────────────────────────
 (async () => {
   setupNavbar();
+  updateCartBadge(); // Show count on page load
   await initCurrency();
   await loadProducts();
 })();
@@ -15,6 +16,8 @@ let searchTimer = null;
 // ─── Navbar Setup ─────────────────────────────────────────
 function setupNavbar() {
   const user = getUser();
+  updateCartBadge(); // Always update badge
+
   if (!user) return;
 
   document.getElementById('navLogin').style.display = 'none';
@@ -143,9 +146,26 @@ function createProductCard(product) {
       </div>
       <div class="product-name">${product.name}</div>
       <div class="product-price">${formattedPrice}</div>
+           <div style="margin-bottom:10px">
+        <span style="font-size:11px;font-weight:600;
+          padding:2px 8px;border-radius:50px;
+          background:${product.stock > 5
+            ? '#dcfce7' : product.stock > 0
+            ? '#fef9c3' : '#fee2e2'};
+          color:${product.stock > 5
+            ? '#166534' : product.stock > 0
+            ? '#854d0e' : '#991b1b'}">
+          ${product.stock > 0
+            ? `${product.stock} in stock`
+            : 'Out of stock'}
+        </span>
+      </div>
       <div class="product-actions">
         <button class="btn btn-primary view-btn">View</button>
-        <button class="btn btn-outline cart-btn">🛒 Add</button>
+        <button class="btn btn-outline cart-btn"
+        ${product.stock <= 0 ? 'disabled style="opacity:0.5"' : ''}>
+        🛒 Add
+        </button>
         <button class="btn btn-outline wa-btn">💬</button>
       </div>
     </div>
@@ -157,6 +177,10 @@ function createProductCard(product) {
   });
 
   card.querySelector('.cart-btn').addEventListener('click', () => {
+     if (product.stock <= 0) {
+      alert('This product is out of stock');
+      return;
+    }
     const count = addToCart(
       product,
       product.storeId?.businessName,
@@ -205,8 +229,11 @@ async function loadMore() {
 
 // ─── Cart Toast Notification ──────────────────────────────
 function showCartToast(productName, count) {
+  updateCartBadge(); // Refresh badge immediately
+
   const existing = document.getElementById('cartToast');
   if (existing) existing.remove();
+  // ... rest of function
 
   const toast = document.createElement('div');
   toast.id = 'cartToast';

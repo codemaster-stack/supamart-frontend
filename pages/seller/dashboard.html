@@ -201,6 +201,34 @@
           </small>
         </div>
 
+            <div class="form-group">
+  <label>Base Price (₦ NGN) *</label>
+  <input
+    type="number"
+    id="productPrice"
+    placeholder="e.g. 15000"
+    min="1"
+    required
+  />
+  <small>
+    Display price will be ₦<span id="pricePreview">0</span>
+    (after 10% platform markup)
+  </small>
+</div>
+
+<div class="form-group">
+  <label>Available Stock *</label>
+  <input
+    type="number"
+    id="productStock"
+    placeholder="e.g. 10"
+    min="1"
+    value="1"
+    required
+  />
+  <small>Number of units available for sale</small>
+</div>
+
         <div class="form-group">
           <label>Product Images (up to 5)</label>
           <input

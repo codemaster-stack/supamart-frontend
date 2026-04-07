@@ -134,7 +134,41 @@ function renderProduct(product) {
         month: 'long',
         day: 'numeric'
       })}`;
+
+         // Stock status
+
+  const stockStatus = product.stock > 5
+    ? `<span style="color:var(--success);font-weight:600">
+        ✅ In Stock (${product.stock} available)
+       </span>`
+    : product.stock > 0
+      ? `<span style="color:var(--warning);font-weight:600">
+          ⚠️ Only ${product.stock} left!
+         </span>`
+      : `<span style="color:var(--danger);font-weight:600">
+          ❌ Out of Stock
+         </span>`;
+
+  metaEl.innerHTML = `
+    ${stockStatus}
+    <div style="margin-top:6px;color:var(--gray-400);font-size:13px">
+      Listed on ${new Date(product.createdAt).toLocaleDateString('en-NG', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      })}
+    </div>
+  `;
+}
+
+// Disable buy button if out of stock
+if (product.stock <= 0) {
+  const buyBtn = document.getElementById('buyBtn');
+  if (buyBtn) {
+    buyBtn.disabled = true;
+    buyBtn.textContent = '❌ Out of Stock';
+    buyBtn.style.opacity = '0.6';
+    buyBtn.style.cursor = 'not-allowed';
   }
+}
 
   // Hide loader, show content
   const loader = document.getElementById('pageLoader');

@@ -115,18 +115,20 @@ document.getElementById('onboardForm').addEventListener('submit', async (e) => {
     
     // Use FormData because we're uploading a file
     const formData = new FormData();
-   const countrySelect = document.getElementById('country');
-   const countryCode = countrySelect?.value || 'NG';
-   const countryNames = {
-  NG: 'Nigeria', US: 'United States',
-  GB: 'United Kingdom', DE: 'Germany'
-   };
+  const countrySelect = document.getElementById('country');
+    const countryCode = countrySelect ? countrySelect.value : 'NG';
+    const countryNames = {
+      NG: 'Nigeria',
+      US: 'United States',
+      GB: 'United Kingdom',
+      DE: 'Germany'
+    };
 
-formData.append('businessName', businessName);
-formData.append('location', location);
-formData.append('phoneNumber', phoneNumber);
-formData.append('country', countryNames[countryCode] || 'Nigeria');
-formData.append('countryCode', countryCode);
+    formData.append('businessName', businessName);
+    formData.append('location', location);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('country', countryNames[countryCode] || 'Nigeria');
+    formData.append('countryCode', countryCode);
     if (logoFile) formData.append('logo', logoFile);
 
     // Special fetch for multipart form (file upload)

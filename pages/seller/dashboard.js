@@ -150,9 +150,23 @@ async function loadProductsTab() {
           <div class="product-row-info">
             <div class="product-row-name">${product.name}</div>
             <div class="product-row-price">
-              ${displayPrice}
-              <small>(base: ₦${product.basePriceNGN.toLocaleString()})</small>
-            </div>
+             ${displayPrice}
+             <small>(base: ₦${product.basePriceNGN.toLocaleString()})</small>
+           </div>
+      <div style="margin-top:4px">
+        <span style="font-size:12px;font-weight:600;
+         padding:3px 10px;border-radius:50px;
+         background:${product.stock > 5
+         ? '#dcfce7' : product.stock > 0
+         ? '#fef9c3' : '#fee2e2'};
+         color:${product.stock > 5
+         ? '#166534' : product.stock > 0
+         ? '#854d0e' : '#991b1b'}">
+          ${product.stock > 0
+          ? `${product.stock} in stock`
+           : '⚠️ Out of stock'}
+        </span>
+      </div>
           </div>
           <div class="product-row-actions">
             <button
@@ -340,6 +354,7 @@ async function openProductModal(productId = null) {
       document.getElementById('productName').value = product.name;
       document.getElementById('productDesc').value = product.description;
       document.getElementById('productPrice').value = product.basePriceNGN;
+      document.getElementById('productStock').value = product.stock || 1;
       updatePricePreview(product.basePriceNGN);
     }
   } else {
@@ -375,6 +390,7 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
   const name = document.getElementById('productName').value.trim();
   const description = document.getElementById('productDesc').value.trim();
   const basePriceNGN = document.getElementById('productPrice').value;
+  const stock = document.getElementById('productStock').value;
   const imageFiles = document.getElementById('productImages').files;
 
   const btn = document.getElementById('saveProductBtn');
@@ -383,9 +399,10 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
 
   try {
    const formData = new FormData();
-formData.append('name', name);
-formData.append('description', description);
-formData.append('basePriceNGN', basePriceNGN);
+   formData.append('name', name);
+   formData.append('description', description);
+   formData.append('basePriceNGN', basePriceNGN);
+   formData.append('stock', stock || 1);
 
 // Only append images if files were selected
 if (imageFiles && imageFiles.length > 0) {
