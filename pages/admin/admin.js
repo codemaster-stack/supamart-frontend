@@ -48,6 +48,15 @@ async function loadStats() {
     document.getElementById('statOrders').textContent = s.totalOrders;
     document.getElementById('statDisputes').textContent = s.disputedOrders;
     document.getElementById('statEscrow').textContent = s.heldEscrow;
+
+    // Show platform earnings if available
+    if (s.platformEarnings) {
+      const earningsEl = document.getElementById('statEarnings');
+      if (earningsEl) {
+        earningsEl.textContent =
+          `₦${s.platformEarnings.NGN?.toFixed(2) || '0.00'}`;
+      }
+    }
   } catch (error) {
     showAlert('Failed to load stats');
   }

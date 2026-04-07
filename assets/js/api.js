@@ -59,11 +59,31 @@ const CURRENCY_SYMBOLS = {
 };
 
 // Compute display price from base NGN price
+// Compute display price with fee breakdown
 function computeDisplayPrice(basePriceNGN, currency, rates) {
   const withMarkup = basePriceNGN * MARKUP;
   if (currency === 'NGN') return withMarkup;
   const rate = rates[currency] || 1;
   return (withMarkup * rate) * INTL_MULTIPLIER;
+}
+
+// Get price breakdown (for admin/internal use)
+function getPriceBreakdown(basePriceNGN, currency, rates) {
+  if (currency === 'NGN') {
+    return {
+      sellerAmount: basePriceNGN,
+      platformFee: basePriceNGN * 0.10,
+      total: basePriceNGN * 1.10
+    };
+  }
+  const rate = rates[currency] || 1;
+  const sellerAmount = basePriceNGN * rate * INTL_MULTIPLIER;
+  const platformFee = sellerAmount * 0.10;
+  return {
+    sellerAmount,
+    platformFee,
+    total: sellerAmount + platformFee
+  };
 }
 
 // Format price nicely
